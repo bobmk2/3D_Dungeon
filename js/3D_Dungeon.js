@@ -92,6 +92,215 @@ window.onload = function () {
 			player.frame = player.direction;
 			player.tick ++;
 		});
+
+		//視界文字列
+		var label = new Label("視界");
+		label.font = "12px monospace";
+		label.x = 140;
+		label.y = 0;
+		game.rootScene.addChild(label);
+
+		player.updateEyesight = function()
+		{
+			var eyesight = [
+				[9, 9, 9, 9, 9, 9, 9],
+				[9, 9, 9, 9, 9, 9, 9],
+				[9, 9, 9, 9, 9, 9, 9],
+				[9, 9, 9, 9, 9, 9, 9],
+				[9, 9, 9, 9, 9, 9, 9],
+				[9, 9, 9, 9, 9, 9, 9],
+				[9, 9, 9, 9, 9, 9, 9]
+			];
+
+			//mapの座標に変換する
+			var mapIdxX = player.posX * 2 + 1;
+			var mapIdxY = player.posY * 2 + 1;
+			console.log("mapIdxX:"+mapIdxX + " / mapIdxY:"+mapIdxY);
+			var startIdxX = 0;
+			var startIdxY = 0;
+			var endIdxX = 0;
+			var endIdxY = 0;
+
+			//プレイヤーの視界を更新
+			switch(player.direction)
+			{
+				case DIR_TOP:
+					startIdxX = mapIdxX - 3;
+					startIdxY = mapIdxY - 5;
+
+					endIdxX = mapIdxX + 3;
+					endIdxY = mapIdxY + 1;
+
+					var cY = 0;
+					var cX = 0;
+					for(var i =startIdxY;i<=endIdxY;i++)
+					{
+						if(i < 0 || i >= map.length)
+						{
+							cY ++;
+							continue;
+						}
+						cX = 0;
+						for(var j=startIdxX;j<=endIdxX;j++)
+						{
+							if(j < 0 || j >= map[0].length)
+							{
+								cX ++;
+								continue;
+							}
+							eyesight[cY][cX] = map[i][j];
+							cX ++;
+						}
+						cY ++;
+					}
+					break;
+				case DIR_LEFT:
+					startIdxX = mapIdxX - 5;
+					startIdxY = mapIdxY - 3;
+
+					endIdxX = mapIdxX + 1;
+					endIdxY = mapIdxY + 3;
+
+					var cY =eyesight.length - 1;
+					var cX = 0;
+					for(var i =startIdxY;i<=endIdxY;i++)
+					{
+						if(i < 0 || i >= map.length)
+						{
+							cY --;
+							continue;
+						}
+						cX = 0;
+						for(var j=startIdxX;j<=endIdxX;j++)
+						{
+							if(j < 0 || j >= map[0].length)
+							{
+								cX ++;
+								continue;
+							}
+							eyesight[cX][cY] = map[i][j];
+							cX ++;
+						}
+						cY --;
+					}
+					break;
+				case DIR_BOTTOM:
+					startIdxX = mapIdxX - 3;
+					startIdxY = mapIdxY - 1;
+
+					endIdxX = mapIdxX + 3;
+					endIdxY = mapIdxY + 5;
+
+					var cY = eyesight.length - 1;
+					var cX = eyesight[0].length - 1;
+					for(var i =startIdxY;i<=endIdxY;i++)
+					{
+						if(i < 0 || i >= map.length)
+						{
+							cY --;
+							continue;
+						}
+						cX = eyesight[0].length - 1;
+						for(var j=startIdxX;j<=endIdxX;j++)
+						{
+							if(j < 0 || j >= map[0].length)
+							{
+								cX --;
+								continue;
+							}
+							eyesight[cY][cX] = map[i][j];
+							cX --;
+						}
+						cY --;
+					}
+					break;
+				case DIR_RIGHT:
+					startIdxX = mapIdxX - 1;
+					startIdxY = mapIdxY - 3;
+
+					endIdxX = mapIdxX + 5;
+					endIdxY = mapIdxY + 3;
+					console.log("sX:"+startIdxX+" > eX:"+endIdxX + " / sY:"+startIdxY+" > eY:"+endIdxY);
+					var cY = 0;
+					var cX = eyesight[0].length - 1;
+					for(var i =startIdxY;i<=endIdxY;i++)
+					{
+						if(i < 0 || i >= map.length)
+						{
+							cY ++;
+							continue;
+						}
+						cX = eyesight[0].length - 1;
+						for(var j=startIdxX;j<=endIdxX;j++)
+						{
+							if(j < 0 || j >= map[0].length)
+							{
+								cX --;
+								continue;
+							}
+							eyesight[cX][cY] = map[i][j];
+							cX --;
+						}
+						cY ++;
+					}
+					break;
+			}
+
+			var str = ">";
+			var sX = 165;
+
+			for(var i =0;i<eyesight.length;i++)
+			{
+				for(var j=0;j<eyesight[i].length;j++)
+				{
+					str += eyesight[i][j] + ","
+					if (i % 2 == 0 && j % 2 == 0) {
+						image.draw(maptip, 144, 0, 4, 4,sX+ (j / 2) * 20, (i / 2) * 20, 4, 4);
+					}
+					else if (i % 2 == 1 && j % 2 == 1) {
+						if (eyesight[i][j] == 0) {
+							image.draw(maptip, 0, 0, 16, 16,sX+ ((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
+						}
+						else if (eyesight[i][j] == 1) {
+							image.draw(maptip, 112, 0, 16, 16, sX+((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
+						}
+						else
+						{
+							image.draw(maptip, 144, 0, 16, 16, sX+((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
+						}
+					}
+					else if (i % 2 == 1 && j % 2 == 0) {
+						if (eyesight[i][j] == 0) {
+							image.draw(maptip, 0, 0, 4, 16,sX+ (j / 2 * 20), ((i - 1) / 2 * 20) + 4, 4, 16);
+						}
+						else if (eyesight[i][j] == 1) {
+							image.draw(maptip, 112, 0, 4, 16,sX+ (j / 2 * 20), ((i - 1) / 2 * 20) + 4, 4, 16);
+						}
+						else
+						{
+							image.draw(maptip, 144, 0, 4, 16,sX+ (j / 2 * 20), ((i - 1) / 2 * 20) + 4, 4, 16);
+						}
+					}
+					else if (i % 2 == 0 && j % 2 == 1) {
+						//壁
+						if (eyesight[i][j] == 0) {
+							image.draw(maptip, 0, 0, 16, 4,sX+ ((j - 1) / 2 * 20) + 4, (i / 2 * 20), 16, 4);
+						}
+						else if (eyesight[i][j] == 1) {
+							image.draw(maptip, 112, 0, 16, 4,sX+ ((j - 1) / 2 * 20) + 4, (i / 2 * 20), 16, 4);
+						}
+						else
+						{
+							image.draw(maptip, 144, 0, 16, 4,sX+ ((j - 1) / 2 * 20) + 4, (i / 2 * 20), 16, 4);
+						}
+					}
+				}
+				console.log(str);
+				str = ">";
+			}
+
+		};
+
 		player.move = function(dir)
 		{
 			//壁チェック
@@ -135,8 +344,10 @@ window.onload = function () {
 				player.posY += movePosY;
 				player.x = 20 * player.posX + 4;
 				player.y = 20 * player.posY + 4;
+
+				player.updateEyesight();
 			}
-		}
+		};
 
 		game.rootScene.addChild(player);
 
