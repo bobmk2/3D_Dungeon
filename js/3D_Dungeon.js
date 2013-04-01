@@ -6,10 +6,10 @@
  */
 enchant();
 
-var DIR_TOP = 0;
-var DIR_LEFT = 1;
-var DIR_BOTTOM = 2;
-var DIR_RIGHT = 3;
+var DIR_NORTH = 0;
+var DIR_WEST = 1;
+var DIR_SOUTH = 2;
+var DIR_EAST = 3;
 var player;
 var map;
 
@@ -86,7 +86,7 @@ window.onload = function () {
 		player.posY = 2;
 		player.x = 20 * player.posX + 4;
 		player.y = 20 * player.posY + 4;
-		player.direction = DIR_TOP;//向いてる方向
+		player.direction = DIR_NORTH;//向いてる方向
 		player.addEventListener(Event.ENTER_FRAME, function()
 		{
 			player.frame = player.direction;
@@ -99,6 +99,282 @@ window.onload = function () {
 		label.x = 140;
 		label.y = 0;
 		game.rootScene.addChild(label);
+
+		Surface.prototype.drawLineA = function(color)
+		{
+			var zeroX = 0;
+			var zeroY = 0;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 48);
+			this.context.lineTo(zeroX + 8, zeroY + 40);
+			this.context.lineTo(zeroX + 8, zeroY + 8);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawLineB = function(color)
+		{
+			var zeroX = 48;
+			var zeroY = 0;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX - 8, zeroY + 8);
+			this.context.lineTo(zeroX - 8, zeroY + 40);
+			this.context.lineTo(zeroX, zeroY + 48);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawLineC = function(color)
+		{
+			var zeroX = 8;
+			var zeroY = 8;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 32);
+			this.context.lineTo(zeroX + 6, zeroY + 26);
+			this.context.lineTo(zeroX + 6, zeroY + 6);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+
+		Surface.prototype.drawFirstLeftRect = function(color)
+		{
+			var zeroX = 8;
+			var zeroY = 8;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX - 32, zeroY);
+			this.context.lineTo(zeroX - 32, zeroY + 32);
+			this.context.lineTo(zeroX, zeroY + 32);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+		Surface.prototype.drawLineD = function(color)
+		{
+			var zeroX = 40;
+			var zeroY = 8;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 32);
+			this.context.lineTo(zeroX - 6, zeroY + 26);
+			this.context.lineTo(zeroX - 6, zeroY + 6);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawFirstRightRect = function(color)
+		{
+			var zeroX = 40;
+			var zeroY = 8;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX + 32, zeroY);
+			this.context.lineTo(zeroX + 32, zeroY + 32);
+			this.context.lineTo(zeroX, zeroY + 32);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawFirstCenterRect = function(color)
+		{
+			var zeroX = 8;
+			var zeroY = 8;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX + 32, zeroY);
+			this.context.lineTo(zeroX + 32, zeroY + 32);
+			this.context.lineTo(zeroX, zeroY + 32);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawSecondCenterRect = function(color)
+		{
+			var zeroX = 14;
+			var zeroY = 14;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX + 20, zeroY);
+			this.context.lineTo(zeroX + 20, zeroY + 20);
+			this.context.lineTo(zeroX, zeroY + 20);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawLineE = function(color)
+		{
+			var zeroX = 14;
+			var zeroY = 14;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 20);
+			this.context.lineTo(zeroX + 4, zeroY + 16);
+			this.context.lineTo(zeroX + 4, zeroY + 4);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawSecondLeftRect = function(color)
+		{
+			var zeroX = 14;
+			var zeroY = 14;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 20);
+			this.context.lineTo(zeroX - 20, zeroY + 20);
+			this.context.lineTo(zeroX - 20, zeroY);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawLineF = function(color)
+		{
+			var zeroX = 34;
+			var zeroY = 14;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 20);
+			this.context.lineTo(zeroX - 4, zeroY + 16);
+			this.context.lineTo(zeroX - 4, zeroY + 4);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawSecondRightRect = function(color)
+		{
+			var zeroX = 34;
+			var zeroY = 14;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 20);
+			this.context.lineTo(zeroX + 20, zeroY + 20);
+			this.context.lineTo(zeroX + 20, zeroY);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		Surface.prototype.drawThirdLeftRect = function(color)
+		{
+			var zeroX = 18;
+			var zeroY = 18;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 12);
+			this.context.lineTo(zeroX - 12, zeroY + 12);
+			this.context.lineTo(zeroX - 12, zeroY);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+		Surface.prototype.drawThirdCenterRect = function(color)
+		{
+			var zeroX = 18;
+			var zeroY = 18;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 12);
+			this.context.lineTo(zeroX + 12, zeroY + 12);
+			this.context.lineTo(zeroX + 12, zeroY);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+		Surface.prototype.drawThirdRightRect = function(color)
+		{
+			var zeroX = 30;
+			var zeroY = 18;
+
+			this.context.strokeStyle = color;
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(zeroX,zeroY);
+			this.context.lineTo(zeroX, zeroY + 12);
+			this.context.lineTo(zeroX + 12, zeroY + 12);
+			this.context.lineTo(zeroX + 12, zeroY);
+			this.context.closePath();
+
+			this.context.fill();
+			this.context.stroke();
+		}
+
+		var surface = new Surface(50,50);
+		var sprite = new Sprite(50,50);
+		sprite.image = surface;
+		sprite.x = 120;
+		sprite.y = 120;
+		game.rootScene.addChild(sprite);
+
 
 		player.updateEyesight = function()
 		{
@@ -124,7 +400,7 @@ window.onload = function () {
 			//プレイヤーの視界を更新
 			switch(player.direction)
 			{
-				case DIR_TOP:
+				case DIR_NORTH:
 					startIdxX = mapIdxX - 3;
 					startIdxY = mapIdxY - 5;
 
@@ -154,7 +430,7 @@ window.onload = function () {
 						cY ++;
 					}
 					break;
-				case DIR_LEFT:
+				case DIR_WEST:
 					startIdxX = mapIdxX - 5;
 					startIdxY = mapIdxY - 3;
 
@@ -184,7 +460,7 @@ window.onload = function () {
 						cY --;
 					}
 					break;
-				case DIR_BOTTOM:
+				case DIR_SOUTH:
 					startIdxX = mapIdxX - 3;
 					startIdxY = mapIdxY - 1;
 
@@ -214,7 +490,7 @@ window.onload = function () {
 						cY --;
 					}
 					break;
-				case DIR_RIGHT:
+				case DIR_EAST:
 					startIdxX = mapIdxX - 1;
 					startIdxY = mapIdxY - 3;
 
@@ -299,6 +575,87 @@ window.onload = function () {
 				str = ">";
 			}
 
+
+			surface.clear();
+			//eyesightを元に3Dダンジョンを表示
+
+
+			//#一番奥の壁
+			if(eyesight[0][1])
+			{
+				surface.drawThirdLeftRect("rgb(0,0,0)");
+			}
+			if(eyesight[0][3])
+			{
+				surface.drawThirdCenterRect("rgb(20,20,20)");
+			}
+			if(eyesight[0][5])
+			{
+				surface.drawThirdRightRect("rgb(0,0,0)");
+			}
+
+			//#
+			if(eyesight[1][2] == 1)
+			{
+				surface.drawLineE("rgb(40,40,40)");
+			}
+
+			if(eyesight[1][4] == 1)
+			{
+				surface.drawLineF("rgb(40,40,40)");
+			}
+
+			//## 二番目に奥の壁
+			if(eyesight[2][1] == 1)
+			{
+				surface.drawSecondLeftRect("rgb(60,60,60)");
+			}
+			if(eyesight[2][3] == 1)
+			{
+				surface.drawSecondCenterRect("rgb(100,100,100)");
+			}
+			if(eyesight[2][5] == 1)
+			{
+				surface.drawSecondRightRect("rgb(60,60,60)");
+			}
+
+
+			//##
+			if(eyesight[3][2] == 1)
+			{
+				surface.drawLineC("rgb(120,120,120)");
+			}
+
+			if(eyesight[3][4] == 1)
+			{
+				surface.drawLineD("rgb(120,120,120)");
+			}
+
+			//### 一番手前の壁
+			if(eyesight[4][1] == 1)
+			{
+				surface.drawFirstLeftRect("rgb(140,140,140)");
+			}
+
+			if(eyesight[4][5] == 1)
+			{
+				surface.drawFirstRightRect("rgb(140,140,140)");
+			}
+
+			if(eyesight[4][3] == 1)
+			{
+				surface.drawFirstCenterRect("rgb(160,160,160)");
+			}
+
+			//### 一番前
+			if(eyesight[5][2] == 1)
+			{
+				surface.drawLineA("rgb(200,200,200)");
+			}
+			if(eyesight[5][4] == 1)
+			{
+				surface.drawLineB("rgb(200,200,200)");
+			}
 		};
 
 		player.move = function(dir)
@@ -312,25 +669,25 @@ window.onload = function () {
 			var movePosY = 0;
 			switch(dir)
 			{
-				case DIR_TOP:
+				case DIR_NORTH:
 					if(map[mapIdxY-1][mapIdxX] == 0)
 					{
 						movePosY = -1;
 					}
 					break;
-				case DIR_LEFT:
+				case DIR_WEST:
 					if(map[mapIdxY][mapIdxX-1] == 0)
 					{
 						movePosX = -1;
 					}
 					break;
-				case DIR_BOTTOM:
+				case DIR_SOUTH:
 					if(map[mapIdxY+1][mapIdxX] == 0)
 					{
 						movePosY = 1;
 					}
 					break;
-				case DIR_RIGHT:
+				case DIR_EAST:
 					if(map[mapIdxY][mapIdxX+1] == 0)
 					{
 						movePosX = 1;
@@ -369,46 +726,50 @@ window.onload = function () {
 		}
 		switch(e.type){
 			case Event.UP_BUTTON_DOWN:
-				if(player.direction != DIR_TOP)
+				if(player.direction != DIR_NORTH)
 				{
-					player.direction = DIR_TOP;
+					player.direction = DIR_NORTH;
+					player.updateEyesight();
 				}
 				else
 				{
-					player.move(DIR_TOP);
+					player.move(DIR_NORTH);
 				}
 				player.tick = 0;
 				break;
 			case Event.DOWN_BUTTON_DOWN:
-				if(player.direction != DIR_BOTTOM)
+				if(player.direction != DIR_SOUTH)
 				{
-					player.direction = DIR_BOTTOM;
+					player.direction = DIR_SOUTH;
+					player.updateEyesight();
 				}
 				else
 				{
-					player.move(DIR_BOTTOM);
+					player.move(DIR_SOUTH);
 				}
 				player.tick = 0;
 				break;
 			case Event.RIGHT_BUTTON_DOWN:
-				if(player.direction != DIR_RIGHT)
+				if(player.direction != DIR_EAST)
 				{
-					player.direction = DIR_RIGHT;
+					player.direction = DIR_EAST;
+					player.updateEyesight();
 				}
 				else
 				{
-					player.move(DIR_RIGHT);
+					player.move(DIR_EAST);
 				}
 				player.tick = 0;
 				break;
 			case Event.LEFT_BUTTON_DOWN:
-				if(player.direction != DIR_LEFT)
+				if(player.direction != DIR_WEST)
 				{
-					player.direction = DIR_LEFT;
+					player.direction = DIR_WEST;
+					player.updateEyesight();
 				}
 				else
 				{
-					player.move(DIR_LEFT);
+					player.move(DIR_WEST);
 				}
 				player.tick = 0;
 				break;
