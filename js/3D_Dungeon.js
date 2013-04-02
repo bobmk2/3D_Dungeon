@@ -25,7 +25,7 @@ window.onload = function () {
 		var bg = new Sprite(320, 320);
 
 		map = [
-		//  壁    壁    壁    壁    壁    壁
+			//    壁    壁    壁    壁    壁
 			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],//横壁
 			[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
 			[0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],//横壁
@@ -43,8 +43,7 @@ window.onload = function () {
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]//横壁
-
-		//  壁    壁    壁    壁    壁    壁
+			//    壁    壁    壁    壁    壁
 		];
 
 		var maptip = game.assets[mapPath];
@@ -129,43 +128,43 @@ window.onload = function () {
 		};
 
 		//視界の左側の台形の壁を描画
-		enchant.Surface.prototype.drawLeftTrapezoidWall = function (color, x, y, long, side, short) {
+		enchant.Surface.prototype.drawLeftTrapezoidWall = function (color, x, y, longLen, legLen, shortLen) {
 			this.context.fillStyle = color;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
-			this.context.lineTo(x, y + long);
-			this.context.lineTo(x + side, y + long - side);
-			this.context.lineTo(x + side, y + side);
+			this.context.lineTo(x, y + longLen);
+			this.context.lineTo(x + legLen, y + longLen - legLen);
+			this.context.lineTo(x + legLen, y + legLen);
 			this.context.closePath();
 			this.context.fill();
 
 			this.context.strokeStyle = "rgb(0,0,0)";
 			this.context.beginPath();
 			this.context.moveTo(x, y);
-			this.context.lineTo(x, y + long);
-			this.context.lineTo(x + side, y + long - side);
-			this.context.lineTo(x + side, y + side);
+			this.context.lineTo(x, y + longLen);
+			this.context.lineTo(x + legLen, y + longLen - legLen);
+			this.context.lineTo(x + legLen, y + legLen);
 			this.context.closePath();
 			this.context.stroke();
 		};
 
 		//視界の右側の台形の壁を描画
-		enchant.Surface.prototype.drawRightTrapezoidWall = function (color, x, y, long, side, short) {
+		enchant.Surface.prototype.drawRightTrapezoidWall = function (color, x, y, longLen, legLen, shortLen) {
 			this.context.fillStyle = color;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
-			this.context.lineTo(x, y + long);
-			this.context.lineTo(x - side, y + long - side);
-			this.context.lineTo(x - side, y + side);
+			this.context.lineTo(x, y + longLen);
+			this.context.lineTo(x - legLen, y + longLen - legLen);
+			this.context.lineTo(x - legLen, y + legLen);
 			this.context.closePath();
 			this.context.fill();
 
 			this.context.strokeStyle = "rgb(0,0,0)";
 			this.context.beginPath();
 			this.context.moveTo(x, y);
-			this.context.lineTo(x, y + long);
-			this.context.lineTo(x - side, y + long - side);
-			this.context.lineTo(x - side, y + side);
+			this.context.lineTo(x, y + longLen);
+			this.context.lineTo(x - legLen, y + longLen - legLen);
+			this.context.lineTo(x - legLen, y + legLen);
 			this.context.closePath();
 			this.context.stroke();
 		};
@@ -198,7 +197,7 @@ window.onload = function () {
 			var endIdxX = 0;
 			var endIdxY = 0;
 
-			var i, j,cY, cX;
+			var i, j, cY, cX;
 
 			//プレイヤーの視界を更新
 			switch (player.direction) {
@@ -353,90 +352,33 @@ window.onload = function () {
 				}
 			}
 
-
-			surface.clear();
 			//eyesightを元に3Dダンジョンを表示
-
-			var WALL_COLORS = [
-				"rgb(0,0,0)",
-				"rgb(30,30,30)",
-				"rgb(60,60,60)",
-				"rgb(90,90,90)",
-				"rgb(120,120,120)",
-				"rgb(150,150,150)",
-				"rgb(180,180,180)",
-				"rgb(210,210,210)",
-				"rgb(240,240,240)"];
+			surface.clear();
 
 			//#三番目(一番奥)の壁
-			if (eyesight[0][1]) {
-				//三番目左正面
-				surface.drawSquareWall(WALL_COLORS[0], 6, 18, 12, 12);
-			}
-			if (eyesight[0][3]) {
-				//三番目中正面
-				surface.drawSquareWall(WALL_COLORS[1], 18, 18, 12, 12);
-			}
-			if (eyesight[0][5]) {
-				//三番目右正面
-				surface.drawSquareWall(WALL_COLORS[0], 30, 18, 12, 12);
-			}
-//			draw3dDungeon(surface, eyesight, 0, 6, 18, 12, 12, 14, 14, 20, 4, 12);
+			var r = 0, g = 0, b = 0;
+			draw3dWalls(surface, eyesight, r, g, b, 0,
+				6, 18, 12, 12,		//正面の壁(x, y, width, height)
+				14, 14, 20, 4, 12	//左右の壁(x, y, long, side, short)
+			);
 
-			//#
-			if (eyesight[1][2] == 1) {
-				//三番目左壁
-				surface.drawLeftTrapezoidWall(WALL_COLORS[2], 14, 14, 20, 4, 12);
-			}
-			if (eyesight[1][4] == 1) {
-				//三番目右壁
-				surface.drawRightTrapezoidWall(WALL_COLORS[2], 34, 14, 20, 4, 12);
-			}
+			//#二番目の壁
+			r += 50;
+			g += 50;
+			b += 50;
+			draw3dWalls(surface, eyesight, r, g, b, 2,
+				-6, 14, 20, 20,	//正面の壁(x, y, width, height)
+				8, 8, 32, 6, 20	//左右の壁(x, y, long, side, short)
+			);
 
-			//## 二番目に奥の壁
-			if (eyesight[2][1] == 1) {
-				//二番目左正面
-				surface.drawSquareWall(WALL_COLORS[3], -6, 14, 20, 20);
-			}
-			if (eyesight[2][3] == 1) {
-				//二番目中正面
-				surface.drawSquareWall(WALL_COLORS[4], 14, 14, 20, 20);
-			}
-			if (eyesight[2][5] == 1) {
-				//二番目右正面
-				surface.drawSquareWall(WALL_COLORS[3], 34, 14, 20, 20);
-			}
-			if (eyesight[3][2] == 1) {
-				//二番目左壁
-				surface.drawLeftTrapezoidWall(WALL_COLORS[5], 8, 8, 32, 6, 20);
-			}
-
-			if (eyesight[3][4] == 1) {
-				//二番目右壁
-				surface.drawRightTrapezoidWall(WALL_COLORS[5], 40, 8, 32, 6, 20);
-			}
-
-			//### 一番手前の壁
-			if (eyesight[4][1] == 1) {
-				//一番手前左正面
-				surface.drawSquareWall(WALL_COLORS[6], -24, 8, 32, 32);
-			}
-			if (eyesight[4][3] == 1) {
-				//一番手前中正面
-				surface.drawSquareWall(WALL_COLORS[7], 8, 8, 32, 32);
-			}
-			if (eyesight[4][5] == 1) {
-				//一番手前右正面
-				surface.drawSquareWall(WALL_COLORS[6], 40, 8, 32, 32);
-			}
-			if (eyesight[5][2] == 1) {
-				//一番手前左壁
-				surface.drawLeftTrapezoidWall(WALL_COLORS[8], 0, 0, 48, 8, 32);
-			}
-			if (eyesight[5][4] == 1) {
-				//一番手前右壁
-				surface.drawRightTrapezoidWall(WALL_COLORS[8], 48, 0, 48, 8, 32);
-			}
+			//#一番手前の壁
+			r += 50;
+			g += 50;
+			b += 50;
+			draw3dWalls(surface, eyesight, r, g, b, 4,
+				-24, 8, 32, 32,	//正面の壁(x, y, width, height)
+				0, 0, 48, 8, 32	//左右の壁(x, y, long, side, short)
+			);
 		};
 
 		player.move = function (dir) {
@@ -532,27 +474,34 @@ window.onload = function () {
 		}
 	}
 
-	function draw3dDungeon(surface, eyesight, idxX, x, y, width, height, tX, tY, long, side, short)
-	{
-		var color = "rgb(255,100,100)";
-		var sqrX = x;
+	//邪魔だったのでまとめた
+	function draw3dWalls(surface, eyesight, r, g, b, idxX, x, y, width, height, tX, tY, longLen, legLen, shortLen) {
+		var color1 = "rgb(" + r + "," + g + "," + b + ")";
+		var color2 = "rgb(" + (r + 20) + "," + (g + 20) + "," + (b + 20) + ")";
+		var color3 = "rgb(" + (r + 40) + "," + (g + 40) + "," + (b + 40) + ")";
 
 		//正面の壁を描画
-		for(var i=0;i<3;i++)
-		{
-			if(eyesight[idxX][(i*2)+1] == 1)
-			surface.drawSquareWall(color, sqrX, y, width, height);
-			sqrX += width;
+		if (eyesight[idxX][1] == 1) {
+			//左
+			surface.drawSquareWall(color1, x, y, width, height);
+		}
+		if (eyesight[idxX][3] == 1) {
+			//中
+			surface.drawSquareWall(color2, x + width, y, width, height);
+		}
+		if (eyesight[idxX][5] == 1) {
+			//右
+			surface.drawSquareWall(color1, x + width * 2, y, width, height);
 		}
 
 		//左右の壁を描画
 		if (eyesight[idxX + 1][2] == 1) {
-			surface.drawLeftTrapezoidWall(color, tX, tY, long, side, short);
+			surface.drawLeftTrapezoidWall(color3, tX, tY, longLen, legLen, shortLen);
 		}
-		if (eyesight[idX + 1][4] == 1) {
-			surface.drawRightTrapezoidWall(color, tX + long, tY, long, side, short);
+		if (eyesight[idxX + 1][4] == 1) {
+			surface.drawRightTrapezoidWall(color3, tX + longLen, tY, longLen, legLen, shortLen);
 		}
-	};
+	}
 
 	game.start();
 };
