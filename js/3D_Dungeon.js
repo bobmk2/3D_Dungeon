@@ -36,7 +36,14 @@ window.onload = function () {
 			[1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
 			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],//横壁
 			[1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0] //横壁
+			[0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0], //横壁
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//下の区画
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //横壁
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]//横壁
+
 		//  壁    壁    壁    壁    壁    壁
 		];
 
@@ -106,256 +113,60 @@ window.onload = function () {
 		sightsceenLabel.y = 100;
 		game.rootScene.addChild(sightsceenLabel);
 
-		enchant.Surface.prototype.drawLineA = function (color) {
-			var zeroX = 0;
-			var zeroY = 0;
-
-			this.context.strokeStyle = color;
+		//四角形の壁を描画
+		enchant.Surface.prototype.drawSquareWall = function (color, x, y, width, height) {
 			this.context.fillStyle = color;
 			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 48);
-			this.context.lineTo(zeroX + 8, zeroY + 40);
-			this.context.lineTo(zeroX + 8, zeroY + 8);
+			this.context.rect(x, y, width, height);
 			this.context.closePath();
-
 			this.context.fill();
+
+			this.context.strokeStyle = "rgb(0,0,0)";
+			this.context.beginPath();
+			this.context.rect(x, y, width, height);
+			this.context.closePath();
 			this.context.stroke();
 		};
 
-		enchant.Surface.prototype.drawLineB = function (color) {
-			var zeroX = 48;
-			var zeroY = 0;
-
-			this.context.strokeStyle = color;
+		//視界の左側の台形の壁を描画
+		enchant.Surface.prototype.drawLeftTrapezoidWall = function (color, x, y, long, side, short) {
 			this.context.fillStyle = color;
 			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX - 8, zeroY + 8);
-			this.context.lineTo(zeroX - 8, zeroY + 40);
-			this.context.lineTo(zeroX, zeroY + 48);
+			this.context.moveTo(x, y);
+			this.context.lineTo(x, y + long);
+			this.context.lineTo(x + side, y + long - side);
+			this.context.lineTo(x + side, y + side);
 			this.context.closePath();
-
 			this.context.fill();
+
+			this.context.strokeStyle = "rgb(0,0,0)";
+			this.context.beginPath();
+			this.context.moveTo(x, y);
+			this.context.lineTo(x, y + long);
+			this.context.lineTo(x + side, y + long - side);
+			this.context.lineTo(x + side, y + side);
+			this.context.closePath();
 			this.context.stroke();
 		};
 
-		enchant.Surface.prototype.drawLineC = function (color) {
-			var zeroX = 8;
-			var zeroY = 8;
-
-			this.context.strokeStyle = color;
+		//視界の右側の台形の壁を描画
+		enchant.Surface.prototype.drawRightTrapezoidWall = function (color, x, y, long, side, short) {
 			this.context.fillStyle = color;
 			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 32);
-			this.context.lineTo(zeroX + 6, zeroY + 26);
-			this.context.lineTo(zeroX + 6, zeroY + 6);
+			this.context.moveTo(x, y);
+			this.context.lineTo(x, y + long);
+			this.context.lineTo(x - side, y + long - side);
+			this.context.lineTo(x - side, y + side);
 			this.context.closePath();
-
 			this.context.fill();
-			this.context.stroke();
-		};
 
-
-		enchant.Surface.prototype.drawFirstLeftRect = function (color) {
-			var zeroX = 8;
-			var zeroY = 8;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
+			this.context.strokeStyle = "rgb(0,0,0)";
 			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX - 32, zeroY);
-			this.context.lineTo(zeroX - 32, zeroY + 32);
-			this.context.lineTo(zeroX, zeroY + 32);
+			this.context.moveTo(x, y);
+			this.context.lineTo(x, y + long);
+			this.context.lineTo(x - side, y + long - side);
+			this.context.lineTo(x - side, y + side);
 			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-		enchant.Surface.prototype.drawLineD = function (color) {
-			var zeroX = 40;
-			var zeroY = 8;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 32);
-			this.context.lineTo(zeroX - 6, zeroY + 26);
-			this.context.lineTo(zeroX - 6, zeroY + 6);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawFirstRightRect = function (color) {
-			var zeroX = 40;
-			var zeroY = 8;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX + 32, zeroY);
-			this.context.lineTo(zeroX + 32, zeroY + 32);
-			this.context.lineTo(zeroX, zeroY + 32);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawFirstCenterRect = function (color) {
-			var zeroX = 8;
-			var zeroY = 8;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX + 32, zeroY);
-			this.context.lineTo(zeroX + 32, zeroY + 32);
-			this.context.lineTo(zeroX, zeroY + 32);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawSecondCenterRect = function (color) {
-			var zeroX = 14;
-			var zeroY = 14;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX + 20, zeroY);
-			this.context.lineTo(zeroX + 20, zeroY + 20);
-			this.context.lineTo(zeroX, zeroY + 20);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawLineE = function (color) {
-			var zeroX = 14;
-			var zeroY = 14;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 20);
-			this.context.lineTo(zeroX + 4, zeroY + 16);
-			this.context.lineTo(zeroX + 4, zeroY + 4);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawSecondLeftRect = function (color) {
-			var zeroX = 14;
-			var zeroY = 14;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 20);
-			this.context.lineTo(zeroX - 20, zeroY + 20);
-			this.context.lineTo(zeroX - 20, zeroY);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawLineF = function (color) {
-			var zeroX = 34;
-			var zeroY = 14;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 20);
-			this.context.lineTo(zeroX - 4, zeroY + 16);
-			this.context.lineTo(zeroX - 4, zeroY + 4);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawSecondRightRect = function (color) {
-			var zeroX = 34;
-			var zeroY = 14;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 20);
-			this.context.lineTo(zeroX + 20, zeroY + 20);
-			this.context.lineTo(zeroX + 20, zeroY);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-
-		enchant.Surface.prototype.drawThirdLeftRect = function (color) {
-			var zeroX = 18;
-			var zeroY = 18;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 12);
-			this.context.lineTo(zeroX - 12, zeroY + 12);
-			this.context.lineTo(zeroX - 12, zeroY);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-		enchant.Surface.prototype.drawThirdCenterRect = function (color) {
-			var zeroX = 18;
-			var zeroY = 18;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 12);
-			this.context.lineTo(zeroX + 12, zeroY + 12);
-			this.context.lineTo(zeroX + 12, zeroY);
-			this.context.closePath();
-
-			this.context.fill();
-			this.context.stroke();
-		};
-		enchant.Surface.prototype.drawThirdRightRect = function (color) {
-			var zeroX = 30;
-			var zeroY = 18;
-
-			this.context.strokeStyle = color;
-			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(zeroX, zeroY);
-			this.context.lineTo(zeroX, zeroY + 12);
-			this.context.lineTo(zeroX + 12, zeroY + 12);
-			this.context.lineTo(zeroX + 12, zeroY);
-			this.context.closePath();
-
-			this.context.fill();
 			this.context.stroke();
 		};
 
@@ -546,67 +357,85 @@ window.onload = function () {
 			surface.clear();
 			//eyesightを元に3Dダンジョンを表示
 
+			var WALL_COLORS = [
+				"rgb(0,0,0)",
+				"rgb(30,30,30)",
+				"rgb(60,60,60)",
+				"rgb(90,90,90)",
+				"rgb(120,120,120)",
+				"rgb(150,150,150)",
+				"rgb(180,180,180)",
+				"rgb(210,210,210)",
+				"rgb(240,240,240)"];
 
-			//#一番奥の壁
+			//#三番目(一番奥)の壁
 			if (eyesight[0][1]) {
-				surface.drawThirdLeftRect("rgb(0,0,0)");
+				//三番目左正面
+				surface.drawSquareWall(WALL_COLORS[0], 6, 18, 12, 12);
 			}
 			if (eyesight[0][3]) {
-				surface.drawThirdCenterRect("rgb(20,20,20)");
+				//三番目中正面
+				surface.drawSquareWall(WALL_COLORS[1], 18, 18, 12, 12);
 			}
 			if (eyesight[0][5]) {
-				surface.drawThirdRightRect("rgb(0,0,0)");
+				//三番目右正面
+				surface.drawSquareWall(WALL_COLORS[0], 30, 18, 12, 12);
 			}
+//			draw3dDungeon(surface, eyesight, 0, 6, 18, 12, 12, 14, 14, 20, 4, 12);
 
 			//#
 			if (eyesight[1][2] == 1) {
-				surface.drawLineE("rgb(40,40,40)");
+				//三番目左壁
+				surface.drawLeftTrapezoidWall(WALL_COLORS[2], 14, 14, 20, 4, 12);
 			}
-
 			if (eyesight[1][4] == 1) {
-				surface.drawLineF("rgb(40,40,40)");
+				//三番目右壁
+				surface.drawRightTrapezoidWall(WALL_COLORS[2], 34, 14, 20, 4, 12);
 			}
 
 			//## 二番目に奥の壁
 			if (eyesight[2][1] == 1) {
-				surface.drawSecondLeftRect("rgb(60,60,60)");
+				//二番目左正面
+				surface.drawSquareWall(WALL_COLORS[3], -6, 14, 20, 20);
 			}
 			if (eyesight[2][3] == 1) {
-				surface.drawSecondCenterRect("rgb(100,100,100)");
+				//二番目中正面
+				surface.drawSquareWall(WALL_COLORS[4], 14, 14, 20, 20);
 			}
 			if (eyesight[2][5] == 1) {
-				surface.drawSecondRightRect("rgb(60,60,60)");
+				//二番目右正面
+				surface.drawSquareWall(WALL_COLORS[3], 34, 14, 20, 20);
 			}
-
-
-			//##
 			if (eyesight[3][2] == 1) {
-				surface.drawLineC("rgb(120,120,120)");
+				//二番目左壁
+				surface.drawLeftTrapezoidWall(WALL_COLORS[5], 8, 8, 32, 6, 20);
 			}
 
 			if (eyesight[3][4] == 1) {
-				surface.drawLineD("rgb(120,120,120)");
+				//二番目右壁
+				surface.drawRightTrapezoidWall(WALL_COLORS[5], 40, 8, 32, 6, 20);
 			}
 
 			//### 一番手前の壁
 			if (eyesight[4][1] == 1) {
-				surface.drawFirstLeftRect("rgb(140,140,140)");
+				//一番手前左正面
+				surface.drawSquareWall(WALL_COLORS[6], -24, 8, 32, 32);
 			}
-
-			if (eyesight[4][5] == 1) {
-				surface.drawFirstRightRect("rgb(140,140,140)");
-			}
-
 			if (eyesight[4][3] == 1) {
-				surface.drawFirstCenterRect("rgb(160,160,160)");
+				//一番手前中正面
+				surface.drawSquareWall(WALL_COLORS[7], 8, 8, 32, 32);
 			}
-
-			//### 一番前
+			if (eyesight[4][5] == 1) {
+				//一番手前右正面
+				surface.drawSquareWall(WALL_COLORS[6], 40, 8, 32, 32);
+			}
 			if (eyesight[5][2] == 1) {
-				surface.drawLineA("rgb(200,200,200)");
+				//一番手前左壁
+				surface.drawLeftTrapezoidWall(WALL_COLORS[8], 0, 0, 48, 8, 32);
 			}
 			if (eyesight[5][4] == 1) {
-				surface.drawLineB("rgb(200,200,200)");
+				//一番手前右壁
+				surface.drawRightTrapezoidWall(WALL_COLORS[8], 48, 0, 48, 8, 32);
 			}
 		};
 
@@ -702,6 +531,28 @@ window.onload = function () {
 				break;
 		}
 	}
+
+	function draw3dDungeon(surface, eyesight, idxX, x, y, width, height, tX, tY, long, side, short)
+	{
+		var color = "rgb(255,100,100)";
+		var sqrX = x;
+
+		//正面の壁を描画
+		for(var i=0;i<3;i++)
+		{
+			if(eyesight[idxX][(i*2)+1] == 1)
+			surface.drawSquareWall(color, sqrX, y, width, height);
+			sqrX += width;
+		}
+
+		//左右の壁を描画
+		if (eyesight[idxX + 1][2] == 1) {
+			surface.drawLeftTrapezoidWall(color, tX, tY, long, side, short);
+		}
+		if (eyesight[idX + 1][4] == 1) {
+			surface.drawRightTrapezoidWall(color, tX + long, tY, long, side, short);
+		}
+	};
 
 	game.start();
 };
