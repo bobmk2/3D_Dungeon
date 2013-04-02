@@ -438,39 +438,46 @@ window.onload = function () {
 		if (player.tick < 5) {
 			return;
 		}
+		var needUpdateEyesight = false;
 		switch (e.type) {
 			case Event.UP_BUTTON_DOWN:
+				//向いている方向に移動する
 				player.move(player.direction);
-				player.updateEyesight();
-				player.tick = 0;
+				needUpdateEyesight = true;
 				break;
 			case Event.DOWN_BUTTON_DOWN:
+				//後ろを向かせる
 				player.direction += 2;
 				if (player.direction >= 4) {
 					player.direction -= 4;
 				}
-				player.updateEyesight();
-				player.tick = 0;
+				needUpdateEyesight = true;
 				break;
 			case Event.RIGHT_BUTTON_DOWN:
+				//右回転
 				player.direction--;
 				if (player.direction < 0) {
 					player.direction = 3;
 				}
-				player.updateEyesight();
-				player.tick = 0;
+				needUpdateEyesight = true;
 				break;
 			case Event.LEFT_BUTTON_DOWN:
+				//左回転
 				player.direction++;
 				if (player.direction > 3) {
 					player.direction = 0;
 				}
-				player.updateEyesight();
-				player.tick = 0;
+				needUpdateEyesight = true;
 				break;
 			default:
 				error("move()に不明なイベント" + e.type + "が渡されました。");
 				break;
+		}
+
+		if(needUpdateEyesight)
+		{
+			player.updateEyesight();
+			player.tick = 0;
 		}
 	}
 
