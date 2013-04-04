@@ -36,7 +36,7 @@ window.onload = function () {
 			[1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
 			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],//横壁
 			[1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-			[0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0], //横壁
+			[0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0],//横壁
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//下の区画
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //横壁
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -170,8 +170,7 @@ window.onload = function () {
 		};
 
 		//床を描画(x,yは左下(始点)の座標)
-		enchant.Surface.prototype.drawFloor = function (color, x, y, longLen, legLen)
-		{
+		enchant.Surface.prototype.drawFloor = function (color, x, y, longLen, legLen) {
 			this.context.fillStyle = color;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
@@ -379,10 +378,10 @@ window.onload = function () {
 			surface.clear();
 
 			//奥と床を描画します
-			surface.drawFloor("rgb(100,200,100)",0,48,48,8);
-			surface.drawFloor("rgb(80,160,80)",8,40,32,6);
-			surface.drawFloor("rgb(60,120,60)",14,34,20,4);
-			surface.drawSquareWall("rgb(0,0,0)",0,0,48,30)
+			surface.drawFloor(createRgbColor(100,200,100), 0, 48, 48, 8);
+			surface.drawFloor(createRgbaColor(80,160,180), 8, 40, 32, 6);
+			surface.drawFloor(createRgbColor(60,120,60), 14, 34, 20, 4);
+			surface.drawSquareWall(createRgbColor(0,0,0), 0, 0, 48, 30)
 
 			//#三番目(一番奥)の壁
 			var r = 20, g = 20, b = 20;
@@ -420,22 +419,22 @@ window.onload = function () {
 			var movePosY = 0;
 			switch (dir) {
 				case DIR_NORTH:
-					if (map[mapIdxY - 1][mapIdxX] == 0) {
+					if (map[mapIdxY - 1][mapIdxX] != 1) {
 						movePosY = -1;
 					}
 					break;
 				case DIR_WEST:
-					if (map[mapIdxY][mapIdxX - 1] == 0) {
+					if (map[mapIdxY][mapIdxX - 1] != 1) {
 						movePosX = -1;
 					}
 					break;
 				case DIR_SOUTH:
-					if (map[mapIdxY + 1][mapIdxX] == 0) {
+					if (map[mapIdxY + 1][mapIdxX] != 1) {
 						movePosY = 1;
 					}
 					break;
 				case DIR_EAST:
-					if (map[mapIdxY][mapIdxX + 1] == 0) {
+					if (map[mapIdxY][mapIdxX + 1] != 1) {
 						movePosX = 1;
 					}
 					break;
@@ -503,40 +502,123 @@ window.onload = function () {
 				break;
 		}
 
-		if(needUpdateEyesight)
-		{
+		if (needUpdateEyesight) {
 			//視界の更新を行なう
 			player.updateEyesight();
 			player.tick = 0;
 		}
 	}
 
+	function createRgbColor(r, g, b) {
+		r = normalizeColor(r);
+		g = normalizeColor(g);
+		b = normalizeColor(b);
+		return "rgb(" + r + "," + g + "," + b + ")"
+	}
+
+	function createRgbaColor(r, g, b, a) {
+		r = normalizeColor(r);
+		g = normalizeColor(g);
+		b = normalizeColor(b);
+		a = normalizeAlpha(a);
+		return "rgba(" + r + "," + g + "," + b + ", " + a + ")"
+	}
+
+	function normalizeColor(c) {
+		if (c > 255) {
+			c = 255;
+		}
+		if (c < 0) {
+			c = 0;
+		}
+		return c;
+	}
+
+	function normalizeAlpha(a) {
+		if (a < 0) {
+			a = 0;
+		}
+		if (a > 1.0) {
+			a = 1.0;
+		}
+		return a;
+	}
+
 	//邪魔だったのでまとめた
 	function draw3dWalls(surface, eyesight, r, g, b, idxX, x, y, width, height, tX, tY, longLen, legLen, shortLen) {
-		var color1 = "rgb(" + r + "," + g + "," + b + ")";
-		var color2 = "rgb(" + (r + 20) + "," + (g + 20) + "," + (b + 20) + ")";
-		var color3 = "rgb(" + (r + 40) + "," + (g + 40) + "," + (b + 40) + ")";
+		var color1 = createRgbColor(r, g, b);
+		var color2 = createRgbColor(r + 20, g + 20, b + 20);
+		var color3 = createRgbColor(r + 40, g + 40, b + 40);
+		var door1 = createRgbaColor(r, g + 100, b + 100, 0.7);
+		var door2 = createRgbaColor(r + 20, g + 120, b + 120, 0.6);
+		var door3 = createRgbaColor(r + 20, g + 140, b + 140, 0.5);
 
 		//正面の壁を描画
-		if (eyesight[idxX][1] == 1) {
+		if (eyesight[idxX][1] != 0) {
 			//左
-			surface.drawSquareWall(color1, x, y, width, height);
+			switch (eyesight[idxX][1]) {
+				case 1:
+					//壁
+					surface.drawSquareWall(color1, x, y, width, height);
+					break;
+				case 2:
+					//扉
+					surface.drawSquareWall(door1, x, y, width, height);
+					break;
+			}
 		}
-		if (eyesight[idxX][3] == 1) {
+		if (eyesight[idxX][3] != 0) {
 			//中
-			surface.drawSquareWall(color2, x + width, y, width, height);
+			switch (eyesight[idxX][3]) {
+				case 1:
+					//壁
+					surface.drawSquareWall(color2, x + width, y, width, height);
+					break;
+				case 2:
+					//扉
+					surface.drawSquareWall(door2, x + width, y, width, height);
+					break;
+			}
 		}
-		if (eyesight[idxX][5] == 1) {
+		if (eyesight[idxX][5] != 0) {
 			//右
-			surface.drawSquareWall(color1, x + width * 2, y, width, height);
+			switch (eyesight[idxX][5]) {
+				case 1:
+					//壁
+					surface.drawSquareWall(color1, x + width * 2, y, width, height);
+					break;
+				case 2:
+					//扉
+					surface.drawSquareWall(door1, x + width * 2, y, width, height);
+					break;
+			}
 		}
 
 		//左右の壁を描画
-		if (eyesight[idxX + 1][2] == 1) {
-			surface.drawLeftTrapezoidWall(color3, tX, tY, longLen, legLen, shortLen);
+		if (eyesight[idxX + 1][2] != 0) {
+			switch (eyesight[idxX + 1][2]) {
+				case 1:
+					//壁:
+					surface.drawLeftTrapezoidWall(color3, tX, tY, longLen, legLen, shortLen);
+					break;
+				case 2:
+					//扉
+					surface.drawLeftTrapezoidWall(door3, tX, tY, longLen, legLen, shortLen);
+					break;
+			}
 		}
-		if (eyesight[idxX + 1][4] == 1) {
-			surface.drawRightTrapezoidWall(color3, tX + longLen, tY, longLen, legLen, shortLen);
+		if (eyesight[idxX + 1][4] != 0) {
+			switch (eyesight[idxX + 1][4])
+			{
+				case 1:
+					//壁
+					surface.drawRightTrapezoidWall(color3, tX + longLen, tY, longLen, legLen, shortLen);
+					break;
+				case 2:
+					//扉
+					surface.drawRightTrapezoidWall(door3, tX + longLen, tY, longLen, legLen, shortLen);
+					break;
+			}
 		}
 	}
 
