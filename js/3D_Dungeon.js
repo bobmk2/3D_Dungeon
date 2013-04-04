@@ -12,6 +12,7 @@ var DIR_SOUTH = 2;
 var DIR_EAST = 3;
 var player;
 var map;
+var eventmap;
 
 window.onload = function () {
 	var game = new Game(320, 320);
@@ -26,32 +27,49 @@ window.onload = function () {
 
 		map = [
 			//    壁    壁    壁    壁    壁
-			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],//横壁
+			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],//横壁 0
 			[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-			[0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],//横壁
+			[0, 1, 0, 2, 0, 1, 0, 0, 0, 1, 0],//横壁 2
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-			[0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],//横壁
+			[0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],//横壁 4
 			[1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁 6
 			[1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],//横壁
+			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],//横壁 8
 			[1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-			[0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0],//横壁
+			[0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0],//横壁 10
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//下の区画
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //横壁
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //横壁 12
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁 14
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]//横壁
+			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]//横壁 16
 			//    壁    壁    壁    壁    壁
+			//     2     4     6     8    10
 		];
+
+		var i,j;
+		eventmap = new Array(map.length);
+		for(i = 0;i<eventmap.length;i++)
+		{
+			eventmap[i] = new Array(map[i].length);
+			for(j=0;j<eventmap[i].length;j++)
+			{
+				eventmap[i][j] = null;
+			}
+		}
+		eventmap[10][7] = function()
+		{
+			console.log("This door is locked");
+		};
+		eventmap[10][7].isLocked = true;
 
 		var maptip = game.assets[mapPath];
 		var x = map.length;
 		var y = map[0].length;
 		var image = new Surface(320, 320);
-		for (var i = 0; i < x; i++) {
-			for (var j = 0; j < y; j++) {
+		for (i = 0; i < x; i++) {
+			for (j = 0; j < y; j++) {
 				if (i % 2 == 0 && j % 2 == 0) {
 					image.draw(maptip, 144, 0, 4, 4, (j / 2) * 20, (i / 2) * 20, 4, 4);
 				}
@@ -199,6 +217,8 @@ window.onload = function () {
 
 
 		player.updateEyesight = function () {
+			var i, j, cY, cX;
+
 			//視界の範囲は3x3
 			var eyesight = [
 				[9, 9, 9, 9, 9, 9, 9],
@@ -209,6 +229,15 @@ window.onload = function () {
 				[9, 9, 9, 9, 9, 9, 9],
 				[9, 9, 9, 9, 9, 9, 9]
 			];
+			var eventInSight = new Array(7);
+			for(i = 0;i<eventInSight.length;i++)
+			{
+				eventInSight[i] = new Array(7);
+				for(j = 0;j<eventInSight[i].length;j++)
+				{
+					eventInSight[i][j] = null;
+				}
+			}
 
 			//mapの座標に変換する
 			var mapIdxX = player.posX * 2 + 1;
@@ -219,7 +248,6 @@ window.onload = function () {
 			var endIdxX = 0;
 			var endIdxY = 0;
 
-			var i, j, cY, cX;
 
 			//プレイヤーの視界を更新
 			switch (player.direction) {
@@ -244,6 +272,7 @@ window.onload = function () {
 								continue;
 							}
 							eyesight[cY][cX] = map[i][j];
+							eventInSight[cY][cX] = eventmap[i][j];
 							cX++;
 						}
 						cY++;
@@ -270,6 +299,7 @@ window.onload = function () {
 								continue;
 							}
 							eyesight[cX][cY] = map[i][j];
+							eventInSight[cX][cY] = eventmap[i][j];
 							cX++;
 						}
 						cY--;
@@ -296,6 +326,7 @@ window.onload = function () {
 								continue;
 							}
 							eyesight[cY][cX] = map[i][j];
+							eventInSight[cY][cX] = eventmap[i][j];
 							cX--;
 						}
 						cY--;
@@ -322,6 +353,7 @@ window.onload = function () {
 								continue;
 							}
 							eyesight[cX][cY] = map[i][j];
+							eventInSight[cX][cY] = eventmap[i][j];
 							cX--;
 						}
 						cY++;
@@ -419,22 +451,25 @@ window.onload = function () {
 			var movePosY = 0;
 			switch (dir) {
 				case DIR_NORTH:
-					if (map[mapIdxY - 1][mapIdxX] != 1) {
+					if(isMovable(mapIdxX, mapIdxY - 1))
+					{
 						movePosY = -1;
 					}
 					break;
 				case DIR_WEST:
-					if (map[mapIdxY][mapIdxX - 1] != 1) {
+					if(isMovable(mapIdxX - 1, mapIdxY))
+					{
 						movePosX = -1;
 					}
 					break;
 				case DIR_SOUTH:
-					if (map[mapIdxY + 1][mapIdxX] != 1) {
+					if (isMovable(mapIdxX, mapIdxY + 1))
+					{
 						movePosY = 1;
 					}
 					break;
 				case DIR_EAST:
-					if (map[mapIdxY][mapIdxX + 1] != 1) {
+					if (isMovable(mapIdxX + 1, mapIdxY)){
 						movePosX = 1;
 					}
 					break;
@@ -454,6 +489,37 @@ window.onload = function () {
 
 		listenDirectionKey();
 	};
+
+	function isMovable(mapX, mapY)
+	{
+		switch(map[mapY][mapX])
+		{
+			case 0:
+				//何も無い
+				return true;
+			case 1:
+				//壁がある
+				return false;
+			case 2:
+				//扉がある
+				if(eventmap[mapY][mapX] == null)
+				{
+					//ただの扉なので通過
+					return true;
+				}
+				else
+				{
+					if(eventmap[mapY][mapX].isLocked)
+					{
+						eventmap[mapY][mapX]();
+						return false;
+					}
+					return true;
+				}
+			default:
+				return false;
+		}
+	}
 
 	function listenDirectionKey() {
 		game.addEventListener(Event.UP_BUTTON_DOWN, move);
