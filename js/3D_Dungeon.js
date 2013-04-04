@@ -169,6 +169,28 @@ window.onload = function () {
 			this.context.stroke();
 		};
 
+		//床を描画(x,yは左下(始点)の座標)
+		enchant.Surface.prototype.drawFloor = function (color, x, y, longLen, legLen)
+		{
+			this.context.fillStyle = color;
+			this.context.beginPath();
+			this.context.moveTo(x, y);
+			this.context.lineTo(x + longLen, y);
+			this.context.lineTo(x + longLen - legLen, y - legLen);
+			this.context.lineTo(x + legLen, y - legLen);
+			this.context.closePath();
+			this.context.fill();
+
+			this.context.strokeStyle = "rgb(0,0,0)";
+			this.context.beginPath();
+			this.context.moveTo(x, y);
+			this.context.lineTo(x + longLen, y);
+			this.context.lineTo(x + longLen - legLen, y - legLen);
+			this.context.lineTo(x + legLen, y - legLen);
+			this.context.closePath();
+			this.context.stroke();
+		}
+
 		var surface = new Surface(50, 50);
 		var sprite = new Sprite(50, 50);
 		sprite.image = surface;
@@ -178,6 +200,7 @@ window.onload = function () {
 
 
 		player.updateEyesight = function () {
+			//視界の範囲は3x3
 			var eyesight = [
 				[9, 9, 9, 9, 9, 9, 9],
 				[9, 9, 9, 9, 9, 9, 9],
@@ -355,8 +378,14 @@ window.onload = function () {
 			//eyesightを元に3Dダンジョンを表示
 			surface.clear();
 
+			//奥と床を描画します
+			surface.drawFloor("rgb(100,200,100)",0,48,48,8);
+			surface.drawFloor("rgb(80,160,80)",8,40,32,6);
+			surface.drawFloor("rgb(60,120,60)",14,34,20,4);
+			surface.drawSquareWall("rgb(0,0,0)",0,0,48,30)
+
 			//#三番目(一番奥)の壁
-			var r = 0, g = 0, b = 0;
+			var r = 20, g = 20, b = 20;
 			draw3dWalls(surface, eyesight, r, g, b, 0,
 				6, 18, 12, 12,		//正面の壁(x, y, width, height)
 				14, 14, 20, 4, 12	//左右の壁(x, y, long, side, short)
@@ -476,6 +505,7 @@ window.onload = function () {
 
 		if(needUpdateEyesight)
 		{
+			//視界の更新を行なう
 			player.updateEyesight();
 			player.tick = 0;
 		}
