@@ -25,10 +25,24 @@ Wall.prototype.isLocked = function () {
 	return this.m_isLocked;
 };
 
-Wall.prototype.setOpenKey = function (key)
+Wall.prototype.setKey = function (key)
 {
 	this.m_key = key;
-}
+};
+
+Wall.prototype.openKey = function (keys)
+{
+	if(keys[this.m_key] == true)
+	{
+		console.log("key is match");
+		this.m_isLocked = false;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+};
 
 Wall.prototype.setMessage = function (message) {
 	this.m_message = message;

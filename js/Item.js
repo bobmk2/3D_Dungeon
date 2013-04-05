@@ -10,7 +10,7 @@ var Item = function(x, y)
 	this.m_y = y;
 }
 
-Item.prototype.applyEvent = function()
+Item.prototype.applyEvent = function(player)
 {
 	console.log("* event is not found *");
 }

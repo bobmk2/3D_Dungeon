@@ -70,6 +70,11 @@ window.onload = function () {
 		eventmap[10][7].setIsLocked(true);
 		eventmap[10][7].setMessage("* this door is locked * ");
 
+		eventmap[1][1] = new Floor(1,1);
+		var key = "afa";
+		eventmap[1][1].putKey(key);
+		eventmap[10][7].setKey(key);
+
 		var maptip = game.assets[mapPath];
 		var x = map.length;
 		var y = map[0].length;

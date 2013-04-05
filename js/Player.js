@@ -25,6 +25,7 @@ var Player = function(map, eventMap, posX, posY)
 	this.m_posX = posX;
 	this.m_posY = posY;
 	this.m_direction = DIR_NORTH;
+	this.havingKeys = new Object();
 };
 
 Player.prototype.getDirection = function()
@@ -38,6 +39,7 @@ Player.prototype.eyesight = function()
 };
 
 /**
+ * 視界情報をリセットします
  * 本当はprivateメソッドにしたい
  */
 Player.prototype._resetEyesight = function()
@@ -53,7 +55,23 @@ Player.prototype._resetEyesight = function()
 	];
 };
 
+Player.prototype.addKey = function(key)
+{
+	console.log("* you got a ney key ["+key+"]*");
+	this.havingKeys[key] = true;
+};
+
+Player.prototype.hasKey = function(key)
+{
+	if(this.havingKeys[key] == true)
+	{
+		return true;
+	}
+	return false;
+};
+
 /**
+ * 視界情報を更新します
  * 本当はprivateメソッドにしたい
  */
 Player.prototype._updateEyesight = function()
@@ -192,6 +210,13 @@ Player.prototype._updateEyesight = function()
 	}
 };
 
+/**
+ * 動けるかどうか判定します
+ * @param mapX
+ * @param mapY
+ * @returns {boolean}
+ * @private
+ */
 Player.prototype._isMovable = function(mapX , mapY)
 {
 	switch(this.m_map[mapY][mapX])
@@ -204,17 +229,28 @@ Player.prototype._isMovable = function(mapX , mapY)
 			return false;
 		case 2:
 			//扉がある
-			if(this.m_eventMap[mapY][mapX] == null)
+			if(this.m_eventMap[mapY][mapX] == null || !this.m_eventMap[mapY][mapX].isLocked())
 			{
 				//ただの扉なので通過
 				return true;
 			}
 			else
 			{
-				if(this.m_eventMap[mapY][mapX].isLocked)
+				if(this.m_eventMap[mapY][mapX].isLocked())
 				{
 					console.log(this.m_eventMap[mapY][mapX].getMessage());
-					return false;
+
+					//if(this.hasKey(this.m_eventMap[mapY][mapX].getNeededKey()))
+					if(this.m_eventMap[mapY][mapX].openKey(this.havingKeys))
+					{
+						console.log("* you could open the door *");
+						return true;
+					}
+					else
+					{
+						console.log("* you don't have a key for the door *");
+						return false;
+					}
 				}
 				return true;
 			}
@@ -261,6 +297,15 @@ Player.prototype.move = function(direction)
 	if (movePosX != 0 || movePosY != 0) {
 		this.m_posX += movePosX;
 		this.m_posY += movePosY;
+
+		var newMapIdxX =this.m_posX * 2 + 1;
+		var newMapIdxY = this.m_posY * 2 + 1;
+		if(this.m_eventMap[newMapIdxY][newMapIdxX] != null)
+		{
+			console.log(this.m_eventMap[newMapIdxY][newMapIdxX].getMessage());
+			this.m_eventMap[newMapIdxY][newMapIdxX].onEnterPlayer(this);
+		}
+
 		this._updateEyesight();
 	}
 };
