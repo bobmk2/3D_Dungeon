@@ -13,6 +13,7 @@ var DIR_EAST = 3;
 var player;
 var map;
 var eventmap;
+var playerData;
 
 window.onload = function () {
 	var game = new Game(320, 320);
@@ -58,11 +59,16 @@ window.onload = function () {
 				eventmap[i][j] = null;
 			}
 		}
+		/*
 		eventmap[10][7] = function()
 		{
 			console.log("This door is locked");
 		};
 		eventmap[10][7].isLocked = true;
+		*/
+		eventmap[10][7] = new Wall(7, 10);
+		eventmap[10][7].setIsLocked(true);
+		eventmap[10][7].setMessage("* this door is locked * ");
 
 		var maptip = game.assets[mapPath];
 		var x = map.length;
@@ -115,6 +121,8 @@ window.onload = function () {
 			player.frame = player.direction;
 			player.tick++;
 		});
+
+		playerData = new Player(map, eventmap, 2, 2);
 
 		//視界文字列
 		var label = new Label("2D視界");
@@ -511,7 +519,7 @@ window.onload = function () {
 				{
 					if(eventmap[mapY][mapX].isLocked)
 					{
-						eventmap[mapY][mapX]();
+						console.log(eventmap[mapY][mapX].getMessage());
 						return false;
 					}
 					return true;
