@@ -27,7 +27,7 @@ var Player = function(map, eventMap, posX, posY)
 	this.m_direction = DIR_NORTH;
 };
 
-Player.prototype.direction = function()
+Player.prototype.getDirection = function()
 {
 	return this.m_direction;
 };
@@ -74,13 +74,13 @@ Player.prototype._updateEyesight = function()
 	//mapの座標に変換する
 	var mapIdxX = this.m_posX * 2 + 1;
 	var mapIdxY = this.m_posY * 2 + 1;
-	console.log("mapIdxX:" + mapIdxX + " / mapIdxY:" + mapIdxY);
+	console.log("#mapIdxX:" + mapIdxX + " / #mapIdxY:" + mapIdxY);
 	var startIdxX = 0;
 	var startIdxY = 0;
 	var endIdxX = 0;
 	var endIdxY = 0;
 
-	switch (this.direction) {
+	switch (this.m_direction) {
 		case DIR_NORTH:
 			startIdxX = mapIdxX - 3;
 			startIdxY = mapIdxY - 5;

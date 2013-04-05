@@ -10,10 +10,10 @@ var DIR_NORTH = 0;
 var DIR_WEST = 1;
 var DIR_SOUTH = 2;
 var DIR_EAST = 3;
-var player;
+var playerImage;
 var map;
 var eventmap;
-var playerData;
+var player;
 
 window.onload = function () {
 	var game = new Game(320, 320);
@@ -110,19 +110,16 @@ window.onload = function () {
 		game.rootScene.addChild(bg);
 
 		//プレイヤー生成
-		player = new Sprite(16, 16);
-		player.image = game.assets[playerImg];
-		player.posX = 2;
-		player.posY = 2;
-		player.x = 20 * player.posX + 4;
-		player.y = 20 * player.posY + 4;
-		player.direction = DIR_NORTH;//向いてる方向
-		player.addEventListener(Event.ENTER_FRAME, function () {
-			player.frame = player.direction;
-			player.tick++;
+		playerImage = new Sprite(16, 16);
+		playerImage.image = game.assets[playerImg];
+		playerImage.x = 20 * playerImage.posX + 4;
+		playerImage.y = 20 * playerImage.posY + 4;
+		playerImage.addEventListener(Event.ENTER_FRAME, function () {
+			playerImage.frame = player.m_direction;
+			playerImage.tick++;
 		});
 
-		playerData = new Player(map, eventmap, 2, 2);
+		player = new Player(map, eventmap, 2, 2);
 
 		//視界文字列
 		var label = new Label("2D視界");
@@ -223,152 +220,13 @@ window.onload = function () {
 		sprite.y = 120;
 		game.rootScene.addChild(sprite);
 
+		game.rootScene.addChild(playerImage);
 
-		player.updateEyesight = function () {
+		listenDirectionKey();
+
+		playerImage.redrawEyesight = function(eyesight)
+		{
 			var i, j, cY, cX;
-
-			//視界の範囲は3x3
-			var eyesight = [
-				[9, 9, 9, 9, 9, 9, 9],
-				[9, 9, 9, 9, 9, 9, 9],
-				[9, 9, 9, 9, 9, 9, 9],
-				[9, 9, 9, 9, 9, 9, 9],
-				[9, 9, 9, 9, 9, 9, 9],
-				[9, 9, 9, 9, 9, 9, 9],
-				[9, 9, 9, 9, 9, 9, 9]
-			];
-			var eventInSight = new Array(7);
-			for(i = 0;i<eventInSight.length;i++)
-			{
-				eventInSight[i] = new Array(7);
-				for(j = 0;j<eventInSight[i].length;j++)
-				{
-					eventInSight[i][j] = null;
-				}
-			}
-
-			//mapの座標に変換する
-			var mapIdxX = player.posX * 2 + 1;
-			var mapIdxY = player.posY * 2 + 1;
-			console.log("mapIdxX:" + mapIdxX + " / mapIdxY:" + mapIdxY);
-			var startIdxX = 0;
-			var startIdxY = 0;
-			var endIdxX = 0;
-			var endIdxY = 0;
-
-
-			//プレイヤーの視界を更新
-			switch (player.direction) {
-				case DIR_NORTH:
-					startIdxX = mapIdxX - 3;
-					startIdxY = mapIdxY - 5;
-
-					endIdxX = mapIdxX + 3;
-					endIdxY = mapIdxY + 1;
-
-					cY = 0;
-					cX = 0;
-					for (i = startIdxY; i <= endIdxY; i++) {
-						if (i < 0 || i >= map.length) {
-							cY++;
-							continue;
-						}
-						cX = 0;
-						for (j = startIdxX; j <= endIdxX; j++) {
-							if (j < 0 || j >= map[0].length) {
-								cX++;
-								continue;
-							}
-							eyesight[cY][cX] = map[i][j];
-							eventInSight[cY][cX] = eventmap[i][j];
-							cX++;
-						}
-						cY++;
-					}
-					break;
-				case DIR_WEST:
-					startIdxX = mapIdxX - 5;
-					startIdxY = mapIdxY - 3;
-
-					endIdxX = mapIdxX + 1;
-					endIdxY = mapIdxY + 3;
-
-					cY = eyesight.length - 1;
-					cX = 0;
-					for (i = startIdxY; i <= endIdxY; i++) {
-						if (i < 0 || i >= map.length) {
-							cY--;
-							continue;
-						}
-						cX = 0;
-						for (j = startIdxX; j <= endIdxX; j++) {
-							if (j < 0 || j >= map[0].length) {
-								cX++;
-								continue;
-							}
-							eyesight[cX][cY] = map[i][j];
-							eventInSight[cX][cY] = eventmap[i][j];
-							cX++;
-						}
-						cY--;
-					}
-					break;
-				case DIR_SOUTH:
-					startIdxX = mapIdxX - 3;
-					startIdxY = mapIdxY - 1;
-
-					endIdxX = mapIdxX + 3;
-					endIdxY = mapIdxY + 5;
-
-					cY = eyesight.length - 1;
-					cX = eyesight[0].length - 1;
-					for (i = startIdxY; i <= endIdxY; i++) {
-						if (i < 0 || i >= map.length) {
-							cY--;
-							continue;
-						}
-						cX = eyesight[0].length - 1;
-						for (j = startIdxX; j <= endIdxX; j++) {
-							if (j < 0 || j >= map[0].length) {
-								cX--;
-								continue;
-							}
-							eyesight[cY][cX] = map[i][j];
-							eventInSight[cY][cX] = eventmap[i][j];
-							cX--;
-						}
-						cY--;
-					}
-					break;
-				case DIR_EAST:
-					startIdxX = mapIdxX - 1;
-					startIdxY = mapIdxY - 3;
-
-					endIdxX = mapIdxX + 5;
-					endIdxY = mapIdxY + 3;
-
-					cY = 0;
-					cX = eyesight[0].length - 1;
-					for (i = startIdxY; i <= endIdxY; i++) {
-						if (i < 0 || i >= map.length) {
-							cY++;
-							continue;
-						}
-						cX = eyesight[0].length - 1;
-						for (j = startIdxX; j <= endIdxX; j++) {
-							if (j < 0 || j >= map[0].length) {
-								cX--;
-								continue;
-							}
-							eyesight[cX][cY] = map[i][j];
-							eventInSight[cX][cY] = eventmap[i][j];
-							cX--;
-						}
-						cY++;
-					}
-					break;
-			}
-
 			var sX = 120;
 			var sY = 20;
 
@@ -421,7 +279,7 @@ window.onload = function () {
 			surface.drawFloor(createRgbColor(100,200,100), 0, 48, 48, 8);
 			surface.drawFloor(createRgbaColor(80,160,180), 8, 40, 32, 6);
 			surface.drawFloor(createRgbColor(60,120,60), 14, 34, 20, 4);
-			surface.drawSquareWall(createRgbColor(0,0,0), 0, 0, 48, 30)
+			surface.drawSquareWall(createRgbColor(0,0,0), 0, 0, 48, 30);
 
 			//#三番目(一番奥)の壁
 			var r = 20, g = 20, b = 20;
@@ -448,86 +306,7 @@ window.onload = function () {
 				0, 0, 48, 8, 32	//左右の壁(x, y, long, side, short)
 			);
 		};
-
-		player.move = function (dir) {
-			//壁チェック
-			//mapの座標に変換する
-			var mapIdxX = player.posX * 2 + 1;
-			var mapIdxY = player.posY * 2 + 1;
-
-			var movePosX = 0;
-			var movePosY = 0;
-			switch (dir) {
-				case DIR_NORTH:
-					if(isMovable(mapIdxX, mapIdxY - 1))
-					{
-						movePosY = -1;
-					}
-					break;
-				case DIR_WEST:
-					if(isMovable(mapIdxX - 1, mapIdxY))
-					{
-						movePosX = -1;
-					}
-					break;
-				case DIR_SOUTH:
-					if (isMovable(mapIdxX, mapIdxY + 1))
-					{
-						movePosY = 1;
-					}
-					break;
-				case DIR_EAST:
-					if (isMovable(mapIdxX + 1, mapIdxY)){
-						movePosX = 1;
-					}
-					break;
-			}
-
-			if (movePosX != 0 || movePosY != 0) {
-				player.posX += movePosX;
-				player.posY += movePosY;
-				player.x = 20 * player.posX + 4;
-				player.y = 20 * player.posY + 4;
-
-				player.updateEyesight();
-			}
-		};
-
-		game.rootScene.addChild(player);
-
-		listenDirectionKey();
 	};
-
-	function isMovable(mapX, mapY)
-	{
-		switch(map[mapY][mapX])
-		{
-			case 0:
-				//何も無い
-				return true;
-			case 1:
-				//壁がある
-				return false;
-			case 2:
-				//扉がある
-				if(eventmap[mapY][mapX] == null)
-				{
-					//ただの扉なので通過
-					return true;
-				}
-				else
-				{
-					if(eventmap[mapY][mapX].isLocked)
-					{
-						console.log(eventmap[mapY][mapX].getMessage());
-						return false;
-					}
-					return true;
-				}
-			default:
-				return false;
-		}
-	}
 
 	function listenDirectionKey() {
 		game.addEventListener(Event.UP_BUTTON_DOWN, move);
@@ -537,37 +316,37 @@ window.onload = function () {
 	}
 
 	function move(e) {
-		if (player.tick < 5) {
+		if (playerImage.tick < 5) {
 			return;
 		}
 		var needUpdateEyesight = false;
 		switch (e.type) {
 			case Event.UP_BUTTON_DOWN:
 				//向いている方向に移動する
-				player.move(player.direction);
+				player.move(player.m_direction);
 				needUpdateEyesight = true;
 				break;
 			case Event.DOWN_BUTTON_DOWN:
 				//後ろを向かせる
-				player.direction += 2;
-				if (player.direction >= 4) {
-					player.direction -= 4;
+				player.m_direction += 2;
+				if (player.m_direction >= 4) {
+					player.m_direction -= 4;
 				}
 				needUpdateEyesight = true;
 				break;
 			case Event.RIGHT_BUTTON_DOWN:
 				//右回転
-				player.direction--;
-				if (player.direction < 0) {
-					player.direction = 3;
+				player.m_direction--;
+				if (player.m_direction < 0) {
+					player.m_direction = 3;
 				}
 				needUpdateEyesight = true;
 				break;
 			case Event.LEFT_BUTTON_DOWN:
 				//左回転
-				player.direction++;
-				if (player.direction > 3) {
-					player.direction = 0;
+				player.m_direction++;
+				if (player.m_direction > 3) {
+					player.m_direction = 0;
 				}
 				needUpdateEyesight = true;
 				break;
@@ -578,9 +357,27 @@ window.onload = function () {
 
 		if (needUpdateEyesight) {
 			//視界の更新を行なう
-			player.updateEyesight();
-			player.tick = 0;
+			player._updateEyesight();
+			playerImage.redrawEyesight(player.m_eyesight);
+			playerImage.x = 20 * player.m_posX + 4;
+			playerImage.y = 20 * player.m_posY + 4;
+			playerImage.tick = 0;
 		}
+
+		/*
+		var i, j,str;
+		console.log("==========================");
+		console.log("> player eyesight");
+		for(i = 0;i<player.m_eyesight.length;i++)
+		{
+			str = "";
+			for(j=0;j<player.m_eyesight[i].length;j++)
+			{
+				str += "["+player.m_eyesight[i][j]+"]";
+			}
+			console.log(str);
+		}
+		*/
 	}
 
 	function createRgbColor(r, g, b) {
@@ -617,6 +414,9 @@ window.onload = function () {
 		}
 		return a;
 	}
+
+
+
 
 	//邪魔だったのでまとめた
 	function draw3dWalls(surface, eyesight, r, g, b, idxX, x, y, width, height, tX, tY, longLen, legLen, shortLen) {
