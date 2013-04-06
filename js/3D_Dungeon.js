@@ -328,31 +328,22 @@ window.onload = function () {
 		switch (e.type) {
 			case Event.UP_BUTTON_DOWN:
 				//向いている方向に移動する
-				player.move(player.m_direction);
+				player.moveForward();
 				needUpdateEyesight = true;
 				break;
 			case Event.DOWN_BUTTON_DOWN:
 				//後ろを向かせる
-				player.m_direction += 2;
-				if (player.m_direction >= 4) {
-					player.m_direction -= 4;
-				}
+				player.turnAround();
 				needUpdateEyesight = true;
 				break;
 			case Event.RIGHT_BUTTON_DOWN:
 				//右回転
-				player.m_direction--;
-				if (player.m_direction < 0) {
-					player.m_direction = 3;
-				}
+				player.turnRight();
 				needUpdateEyesight = true;
 				break;
 			case Event.LEFT_BUTTON_DOWN:
 				//左回転
-				player.m_direction++;
-				if (player.m_direction > 3) {
-					player.m_direction = 0;
-				}
+				player.turnLeft();
 				needUpdateEyesight = true;
 				break;
 			default:
@@ -361,9 +352,20 @@ window.onload = function () {
 		}
 
 		if (needUpdateEyesight) {
-			//視界の更新を行なう
-			player._updateEyesight();
-			playerImage.redrawEyesight(player.m_eyesight);
+			/*
+			var eyesight = player.getEyesight();
+			var str = "";
+			for(var i = 0;i<eyesight.length;i++)
+			{
+				str = "";
+				for(var j =0;j<eyesight[i].length;j++)
+				{
+					str += "["+eyesight[i][j]+"]";
+				}
+				console.log(str);
+			}
+			*/
+			playerImage.redrawEyesight(player.getEyesight());
 			playerImage.x = 20 * player.m_posX + 4;
 			playerImage.y = 20 * player.m_posY + 4;
 			playerImage.tick = 0;
