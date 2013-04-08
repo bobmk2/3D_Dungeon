@@ -28,23 +28,23 @@ window.onload = function () {
 
 		map = [
 			//    壁    壁    壁    壁    壁
-			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],//横壁 0
+			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],//横壁 0
 			[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-			[0, 1, 0, 2, 0, 1, 0, 0, 0, 1, 0],//横壁 2
+			[1, 1, 1, 2, 1, 1, 1, 0, 1, 1, 1],//横壁 2
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-			[0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],//横壁 4
+			[1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],//横壁 4
 			[1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁 6
+			[1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],//横壁 6
 			[1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],//横壁 8
+			[1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],//横壁 8
 			[1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-			[0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0],//横壁 10
+			[1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],//横壁 10
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//下の区画
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //横壁 12
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //横壁 12
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//横壁 14
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//横壁 14
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-			[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]//横壁 16
+			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]//横壁 16
 			//    壁    壁    壁    壁    壁
 			//     2     4     6     8    10
 		];
@@ -66,6 +66,7 @@ window.onload = function () {
 		};
 		eventmap[10][7].isLocked = true;
 		*/
+		/*
 		eventmap[10][7] = new Wall(7, 10);
 		eventmap[10][7].setIsLocked(true);
 		eventmap[10][7].setMessage("* this door is locked * ");
@@ -74,6 +75,8 @@ window.onload = function () {
 		var key = "afa";
 		eventmap[1][1].putKey(key);
 		eventmap[10][7].setKey(key);
+		*/
+
 
 		var maptip = game.assets[mapPath];
 		var x = map.length;
@@ -82,7 +85,14 @@ window.onload = function () {
 		for (i = 0; i < x; i++) {
 			for (j = 0; j < y; j++) {
 				if (i % 2 == 0 && j % 2 == 0) {
-					image.draw(maptip, 144, 0, 4, 4, (j / 2) * 20, (i / 2) * 20, 4, 4);
+					if(map[i][j] == 0)
+					{
+						image.draw(maptip, 0, 0, 4, 4, (j / 2) * 20, (i / 2) * 20, 4, 4);
+					}
+					else
+					{
+						image.draw(maptip, 112, 0, 4, 4, (j / 2) * 20, (i / 2) * 20, 4, 4);
+					}
 				}
 				else if (i % 2 == 1 && j % 2 == 1) {
 					if (map[i][j] == 0) {
@@ -126,6 +136,17 @@ window.onload = function () {
 
 		player = new Player(map, eventmap, 2, 2);
 
+		eventmap[2][3] = new Door();
+		var lockedDoor = new LockedDoor();
+		lockedDoor.setOpenKey("Key:AutumnLeaves");
+
+		var itemFloor = new ItemFloor();
+		itemFloor.setItem("Key:AutumnLeaves");
+
+		eventmap[10][7] = lockedDoor;
+		eventmap[1][1] = itemFloor;
+
+
 		//視界文字列
 		var label = new Label("2D視界");
 		label.font = "12px monospace";
@@ -143,29 +164,17 @@ window.onload = function () {
 		//四角形の壁を描画
 		enchant.Surface.prototype.drawSquareWall = function (color, x, y, width, height) {
 			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.rect(x, y, width, height);
-			this.context.closePath();
-			this.context.fill();
-
 			this.context.strokeStyle = "rgb(0,0,0)";
 			this.context.beginPath();
 			this.context.rect(x, y, width, height);
 			this.context.closePath();
+			this.context.fill();
 			this.context.stroke();
 		};
 
 		//視界の左側の台形の壁を描画
 		enchant.Surface.prototype.drawLeftTrapezoidWall = function (color, x, y, longLen, legLen, shortLen) {
 			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(x, y);
-			this.context.lineTo(x, y + longLen);
-			this.context.lineTo(x + legLen, y + longLen - legLen);
-			this.context.lineTo(x + legLen, y + legLen);
-			this.context.closePath();
-			this.context.fill();
-
 			this.context.strokeStyle = "rgb(0,0,0)";
 			this.context.beginPath();
 			this.context.moveTo(x, y);
@@ -173,20 +182,13 @@ window.onload = function () {
 			this.context.lineTo(x + legLen, y + longLen - legLen);
 			this.context.lineTo(x + legLen, y + legLen);
 			this.context.closePath();
+			this.context.fill();
 			this.context.stroke();
 		};
 
 		//視界の右側の台形の壁を描画
 		enchant.Surface.prototype.drawRightTrapezoidWall = function (color, x, y, longLen, legLen, shortLen) {
 			this.context.fillStyle = color;
-			this.context.beginPath();
-			this.context.moveTo(x, y);
-			this.context.lineTo(x, y + longLen);
-			this.context.lineTo(x - legLen, y + longLen - legLen);
-			this.context.lineTo(x - legLen, y + legLen);
-			this.context.closePath();
-			this.context.fill();
-
 			this.context.strokeStyle = "rgb(0,0,0)";
 			this.context.beginPath();
 			this.context.moveTo(x, y);
@@ -194,6 +196,7 @@ window.onload = function () {
 			this.context.lineTo(x - legLen, y + longLen - legLen);
 			this.context.lineTo(x - legLen, y + legLen);
 			this.context.closePath();
+			this.context.fill();
 			this.context.stroke();
 		};
 
@@ -227,6 +230,9 @@ window.onload = function () {
 
 		game.rootScene.addChild(playerImage);
 
+		game.keybind(90, 'a');
+		game.keybind(88, 'b');
+		game.keybind(32, "space");
 		listenDirectionKey();
 
 		playerImage.redrawEyesight = function(eyesight)
@@ -314,10 +320,58 @@ window.onload = function () {
 	};
 
 	function listenDirectionKey() {
-		game.addEventListener(Event.UP_BUTTON_DOWN, move);
+		game.addEventListener(enchant.Event.UP_BUTTON_DOWN, move);
 		game.addEventListener(Event.DOWN_BUTTON_DOWN, move);
 		game.addEventListener(Event.RIGHT_BUTTON_DOWN, move);
 		game.addEventListener(Event.LEFT_BUTTON_DOWN, move);
+		game.addEventListener(Event.A_BUTTON_DOWN,onAButtonUp);
+	}
+
+	function onAButtonUp(e)
+	{
+		if (playerImage.tick < 5) {
+			return;
+		}
+
+		//プレイヤーの正面が壁かどうか調べる
+		var posX = player.getPosX();
+		var posY = player.getPosY();
+
+		var dir = player.getDirection();
+
+		var mapIdxX = posX * 2 + 1;
+		var mapIdxY = posY * 2 + 1;
+
+		var moveIdxX = 0;
+		var moveIdxY = 0;
+		switch(dir)
+		{
+			case DIR_NORTH:
+				moveIdxY --;
+				break;
+			case DIR_WEST:
+				moveIdxX --;
+				break;
+			case DIR_SOUTH:
+				moveIdxY ++;
+				break;
+			case DIR_EAST:
+				moveIdxX ++;
+				break;
+		}
+
+		if(map[mapIdxY + moveIdxY][mapIdxX + moveIdxX] == 0)
+		{
+
+		}
+		else if (map[mapIdxY + moveIdxY][mapIdxX + moveIdxX] == 2)
+		{
+			eventmap[mapIdxY + moveIdxY][mapIdxX + moveIdxX].onSearchWall(player);
+			playerImage.redrawEyesight(player.getEyesight());
+			playerImage.x = 20 * player.m_posX + 4;
+			playerImage.y = 20 * player.m_posY + 4;
+			playerImage.tick = 0;
+		}
 	}
 
 	function move(e) {
@@ -365,6 +419,13 @@ window.onload = function () {
 				console.log(str);
 			}
 			*/
+			var mapX = player.getPosX() * 2 + 1;
+			var mapY = player.getPosY() * 2 + 1;
+			if(eventmap[mapY][mapX] != null)
+			{
+				eventmap[mapY][mapX].onEnterFloor(player);
+			}
+
 			playerImage.redrawEyesight(player.getEyesight());
 			playerImage.x = 20 * player.m_posX + 4;
 			playerImage.y = 20 * player.m_posY + 4;
