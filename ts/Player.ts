@@ -29,7 +29,7 @@ class Player {
 	 * 鍵
 	 * TODO もうちょい良い方法あるはず
 	 */
-	private m_keys : Object;
+	private m_keys:Object;
 
 	constructor(map:number[][], eventMap:any[][], posX:number, posY:number) {
 		this.m_map = map;
@@ -38,6 +38,18 @@ class Player {
 		this.m_direction = Player.DIR_NORTH;
 		this._resetEyesight();
 		this.m_keys = {};
+	}
+
+	public getPosX():number {
+		return this.m_posX;
+	}
+
+	public getPosY():number {
+		return this.m_posY;
+	}
+
+	public getDirection():number {
+		return this.m_direction;
 	}
 
 	/**
@@ -64,28 +76,28 @@ class Player {
 		];
 	}
 
-	public addKey(key:any):void
-	{
-		console.log("* you got a ney key ["+key+"]*");
-		this.m_keys[key] = true;
+	public addItem(item:any):void {
+		console.log("* you got a ney key [" + item + "]*");
+		this.m_keys[item] = true;
 	}
 
-	public removeKey(key:any):any
-	{
-		if(!(key in this.m_keys))
-		{
+	public removeItem(item:any):any {
+		if (!(item in this.m_keys)) {
 			return null;
 		}
-		var result:any = this.m_keys[key];
-		this.m_keys[key] == null;
-		delete this.m_keys[key];
+		var result:any = this.m_keys[item];
+		this.m_keys[item] == null;
+		delete this.m_keys[item];
 		return result;
 	}
 
-	public hasKey(key:any):bool
-	{
-		if(key in this.m_keys)
-		{
+	/**
+	 * 引数のアイテムを持っているかどうか判定します
+	 * @param item
+	 * @returns {boolean}
+	 */
+	public hasItem(item:any):bool {
+		if (item in this.m_keys) {
 			return true;
 		}
 		return false;
@@ -102,7 +114,14 @@ class Player {
 		}
 	}
 
+	/**
+	 * 視界を更新します
+	 * TODO リファクタ
+	 * @private
+	 */
 	private _updateEyesight():void {
+
+		//一度視界情報をリセット
 		this._resetEyesight();
 
 		var i, j, cY, cX;
@@ -224,10 +243,17 @@ class Player {
 		}
 	}
 
-;
+	public warpTo(posX:number, posY:number):void {
+		//座標を更新
+		this.m_posX = posX;
+		this.m_posY = posY;
+
+		//視界を更新
+		this._updateEyesight();
+	}
 
 	/**
-	 * 正面方向に移動します
+	 * 向いている方向に移動します
 	 * TODO 横スライド移動への対応
 	 * @returns {boolean}
 	 */
@@ -282,7 +308,7 @@ class Player {
 	}
 
 	/**
-	 * 左回転する
+	 * 左回転します
 	 */
 	public turnLeft():void {
 		this.m_direction++;
@@ -294,7 +320,7 @@ class Player {
 	}
 
 	/**
-	 * 右回転する
+	 * 右回転します
 	 */
 	public turnRight():void {
 		this.m_direction--;
@@ -306,7 +332,7 @@ class Player {
 	}
 
 	/**
-	 * 振り返る
+	 * 振り返ります
 	 */
 	public turnAround():void {
 		this.m_direction += 2;

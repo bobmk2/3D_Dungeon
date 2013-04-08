@@ -12,6 +12,15 @@ var Player = (function () {
     Player.DIR_WEST = 1;
     Player.DIR_SOUTH = 2;
     Player.DIR_EAST = 3;
+    Player.prototype.getPosX = function () {
+        return this.m_posX;
+    };
+    Player.prototype.getPosY = function () {
+        return this.m_posY;
+    };
+    Player.prototype.getDirection = function () {
+        return this.m_direction;
+    };
     Player.prototype.getEyesight = function () {
         return this.m_eyesight;
     };
@@ -82,21 +91,21 @@ var Player = (function () {
             ]
         ];
     };
-    Player.prototype.addKey = function (key) {
-        console.log("* you got a ney key [" + key + "]*");
-        this.m_keys[key] = true;
+    Player.prototype.addItem = function (item) {
+        console.log("* you got a ney key [" + item + "]*");
+        this.m_keys[item] = true;
     };
-    Player.prototype.removeKey = function (key) {
-        if(!(key in this.m_keys)) {
+    Player.prototype.removeItem = function (item) {
+        if(!(item in this.m_keys)) {
             return null;
         }
-        var result = this.m_keys[key];
-        this.m_keys[key] == null;
-        delete this.m_keys[key];
+        var result = this.m_keys[item];
+        this.m_keys[item] == null;
+        delete this.m_keys[item];
         return result;
     };
-    Player.prototype.hasKey = function (key) {
-        if(key in this.m_keys) {
+    Player.prototype.hasItem = function (item) {
+        if(item in this.m_keys) {
             return true;
         }
         return false;
@@ -217,6 +226,11 @@ var Player = (function () {
                 }
                 break;
         }
+    };
+    Player.prototype.warpTo = function (posX, posY) {
+        this.m_posX = posX;
+        this.m_posY = posY;
+        this._updateEyesight();
     };
     Player.prototype.moveForward = function () {
         var movePosX = 0;
