@@ -5,7 +5,7 @@ var Floor = (function () {
     };
     Floor.prototype.onEnterFloor = function (player) {
     };
-    Floor.prototype.onRemoveFloor = function (player) {
+    Floor.prototype.onLeaveFloor = function (player) {
     };
     Floor.prototype.onSearchFloor = function (player) {
     };

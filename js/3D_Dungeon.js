@@ -143,9 +143,13 @@ window.onload = function () {
 		var itemFloor = new ItemFloor();
 		itemFloor.setItem("Key:AutumnLeaves");
 
+		var counterflowFloor = new CounterflowFloor(0);
+
 		eventmap[10][7] = lockedDoor;
 		eventmap[1][1] = itemFloor;
-
+		eventmap[13][3] = counterflowFloor;
+		eventmap[13][5] = counterflowFloor;
+		eventmap[13][7] = counterflowFloor;
 
 		//視界文字列
 		var label = new Label("2D視界");
@@ -374,35 +378,104 @@ window.onload = function () {
 		}
 	}
 
+	function reserveMove(e)
+	{
+		if (playerImage.tick < 8) {
+			return;
+		}
+
+		var lastMapX = player.getPosX() * 2 + 1;
+		var lastMapY = player.getPosY() * 2 + 1;
+
+		var needUpdateEyesight = false;
+		var moved = false;
+
+		if(!player.hasReservedMove())
+		{
+			game.removeEventListener(Event.ENTER_FRAME, reserveMove);
+		}
+		else
+		{
+			var move = player.dequeueReservedMove();
+			if(move == 0)
+			{
+				player.moveForward();
+				moved = true;
+			}
+			needUpdateEyesight = true;
+		}
+
+		if (needUpdateEyesight) {
+			var mapX = player.getPosX() * 2 + 1;
+			var mapY = player.getPosY() * 2 + 1;
+
+			if(moved)
+			{
+				if(eventmap[lastMapY][lastMapX])
+				{
+					eventmap[lastMapY][lastMapX].onLeaveFloor(player);
+				}
+				if(eventmap[mapY][mapX])
+				{
+					eventmap[mapY][mapX].onEnterFloor(player);
+				}
+			}
+
+			playerImage.redrawEyesight(player.getEyesight());
+			playerImage.x = 20 * player.m_posX + 4;
+			playerImage.y = 20 * player.m_posY + 4;
+			playerImage.tick = 0;
+		}
+	}
+
 	function move(e) {
 		if (playerImage.tick < 5) {
 			return;
 		}
+
+		var lastMapX = player.getPosX() * 2 + 1;
+		var lastMapY = player.getPosY() * 2 + 1;
+
 		var needUpdateEyesight = false;
-		switch (e.type) {
-			case Event.UP_BUTTON_DOWN:
-				//向いている方向に移動する
+		var moved = false;
+		if(!player.hasReservedMove())
+		{
+			switch (e.type) {
+				case Event.UP_BUTTON_DOWN:
+					//向いている方向に移動する
+					moved = player.moveForward();
+					needUpdateEyesight = true;
+					break;
+				case Event.DOWN_BUTTON_DOWN:
+					//後ろを向かせる
+					player.turnAround();
+					needUpdateEyesight = true;
+					break;
+				case Event.RIGHT_BUTTON_DOWN:
+					//右回転
+					player.turnRight();
+					needUpdateEyesight = true;
+					break;
+				case Event.LEFT_BUTTON_DOWN:
+					//左回転
+					player.turnLeft();
+					needUpdateEyesight = true;
+					break;
+				default:
+					error("move()に不明なイベント" + e.type + "が渡されました。");
+					break;
+			}
+		}
+		else
+		{
+			/*
+			var move = player.dequeueReservedMove();
+			if(move == 0)
+			{
 				player.moveForward();
-				needUpdateEyesight = true;
-				break;
-			case Event.DOWN_BUTTON_DOWN:
-				//後ろを向かせる
-				player.turnAround();
-				needUpdateEyesight = true;
-				break;
-			case Event.RIGHT_BUTTON_DOWN:
-				//右回転
-				player.turnRight();
-				needUpdateEyesight = true;
-				break;
-			case Event.LEFT_BUTTON_DOWN:
-				//左回転
-				player.turnLeft();
-				needUpdateEyesight = true;
-				break;
-			default:
-				error("move()に不明なイベント" + e.type + "が渡されました。");
-				break;
+			}
+			needUpdateEyesight = true;
+			*/
 		}
 
 		if (needUpdateEyesight) {
@@ -421,9 +494,23 @@ window.onload = function () {
 			*/
 			var mapX = player.getPosX() * 2 + 1;
 			var mapY = player.getPosY() * 2 + 1;
-			if(eventmap[mapY][mapX] != null)
+
+			if(moved)
 			{
-				eventmap[mapY][mapX].onEnterFloor(player);
+				if(eventmap[lastMapY][lastMapX])
+				{
+					eventmap[lastMapY][lastMapX].onLeaveFloor(player);
+				}
+				if(eventmap[mapY][mapX])
+				{
+					eventmap[mapY][mapX].onEnterFloor(player);
+				}
+			}
+
+			if(player.hasReservedMove())
+			{
+				//この時点でプレイヤーの動きに予約が入っていた場合
+				game.addEventListener(Event.ENTER_FRAME, reserveMove);
 			}
 
 			playerImage.redrawEyesight(player.getEyesight());

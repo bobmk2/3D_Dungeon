@@ -26,7 +26,7 @@ var Door = (function () {
     };
     Door.prototype.onEnterFloor = function (player) {
     };
-    Door.prototype.onRemoveFloor = function (player) {
+    Door.prototype.onLeaveFloor = function (player) {
     };
     Door.prototype.onSearchFloor = function (player) {
     };

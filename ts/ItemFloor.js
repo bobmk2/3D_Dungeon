@@ -6,8 +6,7 @@ var __extends = this.__extends || function (d, b) {
 var ItemFloor = (function (_super) {
     __extends(ItemFloor, _super);
     function ItemFloor() {
-        _super.apply(this, arguments);
-
+        _super.call(this);
     }
     ItemFloor.prototype.setItem = function (item) {
         this._item = item;

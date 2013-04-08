@@ -25,6 +25,50 @@ class Player {
 	 */
 	private m_direction:number;
 
+
+	private _isBound:bool;
+
+	public get isBound():bool
+	{
+		return this._isBound;
+	}
+
+	/**
+	 * 操作不能にします
+	 * @param value
+	 */
+	public set isBound(value:bool)
+	{
+		this._isBound = value;
+	}
+
+	private _reservedMoveQueue:number[];
+
+	public hasReservedMove():bool
+	{
+		if(this._reservedMoveQueue.length > 0)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public reserveMove(func:Function):void
+	{
+//		this._reservedMoveQueue.push(func);
+//		this._reservedMoveQueue.push(this.moveForward);
+		this._reservedMoveQueue.push(0);
+	}
+
+	public dequeueReservedMove():number
+	{
+		if(this._reservedMoveQueue.length == 0)
+		{
+			return null;
+		}
+		return this._reservedMoveQueue.shift();
+	}
+
 	/**
 	 * 鍵
 	 * TODO もうちょい良い方法あるはず
@@ -38,6 +82,7 @@ class Player {
 		this.m_direction = Player.DIR_NORTH;
 		this._resetEyesight();
 		this.m_keys = {};
+		this._reservedMoveQueue = new number[];
 	}
 
 	public getPosX():number {
@@ -258,6 +303,7 @@ class Player {
 	 * @returns {boolean}
 	 */
 	public moveForward():bool {
+		console.log("#moveForward");
 		//壁チェック
 		var movePosX:number = 0;
 		var movePosY:number = 0;

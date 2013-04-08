@@ -54,7 +54,7 @@ class Door implements IMapEvent {
 
 	}
 
-	public onRemoveFloor(player:Player):void {
+	public onLeaveFloor(player:Player):void {
 
 	}
 

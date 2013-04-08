@@ -7,11 +7,37 @@ var Player = (function () {
         this._resetEyesight();
         this.m_keys = {
         };
+        this._reservedMoveQueue = new Array();
     }
     Player.DIR_NORTH = 0;
     Player.DIR_WEST = 1;
     Player.DIR_SOUTH = 2;
     Player.DIR_EAST = 3;
+    Object.defineProperty(Player.prototype, "isBound", {
+        get: function () {
+            return this._isBound;
+        },
+        set: function (value) {
+            this._isBound = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Player.prototype.hasReservedMove = function () {
+        if(this._reservedMoveQueue.length > 0) {
+            return true;
+        }
+        return false;
+    };
+    Player.prototype.reserveMove = function (func) {
+        this._reservedMoveQueue.push(0);
+    };
+    Player.prototype.dequeueReservedMove = function () {
+        if(this._reservedMoveQueue.length == 0) {
+            return null;
+        }
+        return this._reservedMoveQueue.shift();
+    };
     Player.prototype.getPosX = function () {
         return this.m_posX;
     };
@@ -233,6 +259,7 @@ var Player = (function () {
         this._updateEyesight();
     };
     Player.prototype.moveForward = function () {
+        console.log("#moveForward");
         var movePosX = 0;
         var movePosY = 0;
         switch(this.m_direction) {

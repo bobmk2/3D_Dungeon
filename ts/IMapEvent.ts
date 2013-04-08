@@ -13,6 +13,6 @@ interface IMapEvent
 
 	//床系のイベント
 	onEnterFloor(player:Player) : void;
-	onRemoveFloor(player:Player) : void;
+	onLeaveFloor(player:Player) : void;
 	onSearchFloor(player:Player) : void;
 }
