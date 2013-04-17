@@ -19,13 +19,17 @@ window.onload = function () {
 	var game = new Game(320, 320);
 	game.fps = 30;
 
-	var mapPath = 'http://enchantjs.com/assets/images/map0.gif';
+	var mapPath = 'map.gif';
 	var playerImg = 'player.png';
 	game.preload(mapPath, playerImg);
 
 	game.onload = function () {
 		var bg = new Sprite(320, 320);
 
+		//0 : 床
+		//1 : 壁
+		//2 : 扉
+		//3 : 氷の床
 		map = [
 			//    壁    壁    壁    壁    壁
 			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],//横壁 0
@@ -41,7 +45,7 @@ window.onload = function () {
 			[1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],//横壁 10
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//下の区画
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //横壁 12
-			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 3, 0, 3, 0, 3, 0, 0, 1],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],//横壁 14
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]//横壁 16
@@ -100,6 +104,10 @@ window.onload = function () {
 					}
 					else if (map[i][j] == 1) {
 						image.draw(maptip, 112, 0, 16, 16, ((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
+					}
+					else if (map[i][j] == 3)
+					{
+						image.draw(maptip, 192, 16, 16, 16, ((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
 					}
 				}
 				else if (i % 2 == 1 && j % 2 == 0) {
@@ -245,17 +253,42 @@ window.onload = function () {
 			var sX = 120;
 			var sY = 20;
 
+			var str = "";
+			for (i = 0; i < eyesight.length; i++) {
+				str ="";
+				for (j = 0; j < eyesight[i].length; j++) {
+					str += "["+eyesight[i][j]+"]";
+				}
+				console.log(str);
+
+			}
+			console.log("========================");
+
 			for (i = 0; i < eyesight.length; i++) {
 				for (j = 0; j < eyesight[i].length; j++) {
 					if (i % 2 == 0 && j % 2 == 0) {
-						image.draw(maptip, 144, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
+						if(eyesight[i][j] === 0)
+						{
+							image.draw(maptip, 0, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
+						}
+						else if (eyesight[i][j] === 1)
+						{
+							image.draw(maptip, 112, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
+						}
+						else
+						{
+							image.draw(maptip, 144, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
+						}
 					}
 					else if (i % 2 == 1 && j % 2 == 1) {
-						if (eyesight[i][j] == 0) {
+						if (eyesight[i][j] === 0) {
 							image.draw(maptip, 0, 0, 16, 16, sX + ((j - 1) / 2 * 20) + 4, sY + ((i - 1) / 2 * 20) + 4, 16, 16);
 						}
-						else if (eyesight[i][j] == 1) {
+						else if (eyesight[i][j] === 1) {
 							image.draw(maptip, 112, 0, 16, 16, sX + ((j - 1) / 2 * 20) + 4, sY + ((i - 1) / 2 * 20) + 4, 16, 16);
+						}
+						else if (eyesight[i][j] === 3) {
+							image.draw(maptip, 192, 16, 16, 16, sX + ((j - 1) / 2 * 20) + 4, sY + ((i - 1) / 2 * 20) + 4, 16, 16);
 						}
 						else {
 							image.draw(maptip, 144, 0, 16, 16, sX + ((j - 1) / 2 * 20) + 4, sY + ((i - 1) / 2 * 20) + 4, 16, 16);
@@ -280,7 +313,8 @@ window.onload = function () {
 						else if (eyesight[i][j] == 1) {
 							image.draw(maptip, 112, 0, 16, 4, sX + ((j - 1) / 2 * 20) + 4, sY + (i / 2 * 20), 16, 4);
 						}
-						else {
+						else
+						{
 							image.draw(maptip, 144, 0, 16, 4, sX + ((j - 1) / 2 * 20) + 4, sY + (i / 2 * 20), 16, 4);
 						}
 					}
