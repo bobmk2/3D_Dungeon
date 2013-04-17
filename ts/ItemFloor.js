@@ -11,11 +11,17 @@ var ItemFloor = (function (_super) {
     ItemFloor.prototype.setItem = function (item) {
         this._item = item;
     };
+    ItemFloor.prototype.setCallback = function (func) {
+        this._func = func;
+    };
     ItemFloor.prototype.onEnterFloor = function (player) {
         if(!this._isPickedUpItem) {
             console.log("* You found the item [" + this._item + "] *");
             player.addItem(this._item);
             this._isPickedUpItem = true;
+            if(this._func) {
+                this._func.apply(null, new Array(this._item));
+            }
         }
     };
     return ItemFloor;

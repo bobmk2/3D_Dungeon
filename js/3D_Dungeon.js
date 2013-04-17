@@ -150,6 +150,7 @@ window.onload = function () {
 
 		var itemFloor = new ItemFloor();
 		itemFloor.setItem("Key:AutumnLeaves");
+		itemFloor.setCallback(showMessageWindows);
 
 		var counterflowFloor = new CounterflowFloor(0);
 
@@ -356,6 +357,61 @@ window.onload = function () {
 			);
 		};
 	};
+
+	var messageWindowGroup;
+
+	function showMessageWindows(message)
+	{
+		console.log("# message incoming " + message + "#");
+		if(messageWindowGroup && game.rootScene.contains(messageWindowGroup))
+		{
+			game.rootScene.removeChild(messageWindowGroup);
+		}
+		var surface = new Surface(120, 40);
+		var messageWindow = new Sprite(120, 40);
+		messageWindow.image = surface;
+		messageWindow.x = 10;
+		messageWindow.y = 100;
+
+		surface.context.fillStyle = createRgbColor(80,80,80);
+		surface.context.beginPath();
+		surface.context.rect(0, 0, 120, 40);
+		surface.context.closePath();
+		surface.context.fill();
+		surface.context.fillStyle = createRgbColor(220,220,220);
+		surface.context.beginPath();
+		surface.context.beginPath();
+		surface.context.rect(5, 5, 110, 30);
+		surface.context.closePath();
+		surface.context.fill();
+
+		messageWindow.image = surface;
+		messageWindow.x = 0;
+		messageWindow.y = 0;
+
+		var label = new Label(message);
+		label.color = "#000";
+		label.font = "12px monospace";
+		label.x = 10;
+		label.y = 10;
+
+		messageWindowGroup = new Group();
+		messageWindowGroup.addChild(messageWindow);
+		messageWindowGroup.addChild(label);
+
+		messageWindowGroup.x = 10;
+		messageWindowGroup.y = 120;
+
+		game.rootScene.addChild(messageWindowGroup);
+	}
+
+	function hideMessageWindow()
+	{
+		if(messageWindowGroup)
+		{
+			game.rootScene.removeChild(messageWindowGroup);
+		}
+	}
 
 	function listenDirectionKey() {
 		game.addEventListener(enchant.Event.UP_BUTTON_DOWN, move);

@@ -17,6 +17,8 @@ class ItemFloor extends Floor
 	private _item:any;
 	private _isPickedUpItem:bool;
 
+	private _func:Function;
+
 	constructor()
 	{
 		super();
@@ -27,6 +29,11 @@ class ItemFloor extends Floor
 		this._item = item;
 	}
 
+	public setCallback(func:Function):void
+	{
+		this._func = func;
+	}
+
 	//床系のイベント
 	public onEnterFloor(player:Player):void {
 		if(!this._isPickedUpItem)
@@ -34,6 +41,10 @@ class ItemFloor extends Floor
 			console.log("* You found the item [" + this._item + "] *");
 			player.addItem(this._item);
 			this._isPickedUpItem = true;
+			if(this._func)
+			{
+				this._func.apply(null, new Array(this._item));
+			}
 		}
 	}
 }
