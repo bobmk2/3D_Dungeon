@@ -53,33 +53,31 @@ window.onload = function () {
 			//     2     4     6     8    10
 		];
 
-		var i,j;
+		var i, j;
 		eventmap = new Array(map.length);
-		for(i = 0;i<eventmap.length;i++)
-		{
+		for (i = 0; i < eventmap.length; i++) {
 			eventmap[i] = new Array(map[i].length);
-			for(j=0;j<eventmap[i].length;j++)
-			{
+			for (j = 0; j < eventmap[i].length; j++) {
 				eventmap[i][j] = null;
 			}
 		}
 		/*
-		eventmap[10][7] = function()
-		{
-			console.log("This door is locked");
-		};
-		eventmap[10][7].isLocked = true;
-		*/
+		 eventmap[10][7] = function()
+		 {
+		 console.log("This door is locked");
+		 };
+		 eventmap[10][7].isLocked = true;
+		 */
 		/*
-		eventmap[10][7] = new Wall(7, 10);
-		eventmap[10][7].setIsLocked(true);
-		eventmap[10][7].setMessage("* this door is locked * ");
+		 eventmap[10][7] = new Wall(7, 10);
+		 eventmap[10][7].setIsLocked(true);
+		 eventmap[10][7].setMessage("* this door is locked * ");
 
-		eventmap[1][1] = new Floor(1,1);
-		var key = "afa";
-		eventmap[1][1].putKey(key);
-		eventmap[10][7].setKey(key);
-		*/
+		 eventmap[1][1] = new Floor(1,1);
+		 var key = "afa";
+		 eventmap[1][1].putKey(key);
+		 eventmap[10][7].setKey(key);
+		 */
 
 
 		var maptip = game.assets[mapPath];
@@ -89,12 +87,10 @@ window.onload = function () {
 		for (i = 0; i < x; i++) {
 			for (j = 0; j < y; j++) {
 				if (i % 2 == 0 && j % 2 == 0) {
-					if(map[i][j] == 0)
-					{
+					if (map[i][j] == 0) {
 						image.draw(maptip, 0, 0, 4, 4, (j / 2) * 20, (i / 2) * 20, 4, 4);
 					}
-					else
-					{
+					else {
 						image.draw(maptip, 112, 0, 4, 4, (j / 2) * 20, (i / 2) * 20, 4, 4);
 					}
 				}
@@ -105,8 +101,7 @@ window.onload = function () {
 					else if (map[i][j] == 1) {
 						image.draw(maptip, 112, 0, 16, 16, ((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
 					}
-					else if (map[i][j] == 3)
-					{
+					else if (map[i][j] == 3) {
 						image.draw(maptip, 192, 16, 16, 16, ((j - 1) / 2 * 20) + 4, ((i - 1) / 2 * 20) + 4, 16, 16);
 					}
 				}
@@ -146,10 +141,12 @@ window.onload = function () {
 
 		eventmap[2][3] = new Door();
 		var lockedDoor = new LockedDoor();
-		lockedDoor.setOpenKey("Key:AutumnLeaves");
+		lockedDoor.setSearchCallback(showMessageWindows);
+		lockedDoor.setOpenKey("AutumnLeaves");
 
 		var itemFloor = new ItemFloor();
-		itemFloor.setItem("Key:AutumnLeaves");
+		itemFloor.setItem("AutumnLeaves");
+		itemFloor.setCallback(onGetKey);
 
 		var counterflowFloor = new CounterflowFloor(0);
 
@@ -247,17 +244,16 @@ window.onload = function () {
 		game.keybind(32, "space");
 		listenDirectionKey();
 
-		playerImage.redrawEyesight = function(eyesight)
-		{
+		playerImage.redrawEyesight = function (eyesight) {
 			var i, j, cY, cX;
 			var sX = 120;
 			var sY = 20;
 
 			var str = "";
 			for (i = 0; i < eyesight.length; i++) {
-				str ="";
+				str = "";
 				for (j = 0; j < eyesight[i].length; j++) {
-					str += "["+eyesight[i][j]+"]";
+					str += "[" + eyesight[i][j] + "]";
 				}
 				console.log(str);
 
@@ -267,16 +263,13 @@ window.onload = function () {
 			for (i = 0; i < eyesight.length; i++) {
 				for (j = 0; j < eyesight[i].length; j++) {
 					if (i % 2 == 0 && j % 2 == 0) {
-						if(eyesight[i][j] === 0)
-						{
+						if (eyesight[i][j] === 0) {
 							image.draw(maptip, 0, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
 						}
-						else if (eyesight[i][j] === 1)
-						{
+						else if (eyesight[i][j] === 1) {
 							image.draw(maptip, 112, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
 						}
-						else
-						{
+						else {
 							image.draw(maptip, 144, 0, 4, 4, sX + (j / 2) * 20, sY + (i / 2) * 20, 4, 4);
 						}
 					}
@@ -313,8 +306,7 @@ window.onload = function () {
 						else if (eyesight[i][j] == 1) {
 							image.draw(maptip, 112, 0, 16, 4, sX + ((j - 1) / 2 * 20) + 4, sY + (i / 2 * 20), 16, 4);
 						}
-						else
-						{
+						else {
 							image.draw(maptip, 144, 0, 16, 4, sX + ((j - 1) / 2 * 20) + 4, sY + (i / 2 * 20), 16, 4);
 						}
 					}
@@ -325,10 +317,10 @@ window.onload = function () {
 			surface.clear();
 
 			//奥と床を描画します
-			surface.drawFloor(createRgbColor(100,200,100), 0, 48, 48, 8);
-			surface.drawFloor(createRgbaColor(80,160,180), 8, 40, 32, 6);
-			surface.drawFloor(createRgbColor(60,120,60), 14, 34, 20, 4);
-			surface.drawSquareWall(createRgbColor(0,0,0), 0, 0, 48, 30);
+			surface.drawFloor(createRgbColor(100, 200, 100), 0, 48, 48, 8);
+			surface.drawFloor(createRgbaColor(80, 160, 180), 8, 40, 32, 6);
+			surface.drawFloor(createRgbColor(60, 120, 60), 14, 34, 20, 4);
+			surface.drawSquareWall(createRgbColor(0, 0, 0), 0, 0, 48, 30);
 
 			//#三番目(一番奥)の壁
 			var r = 20, g = 20, b = 20;
@@ -357,17 +349,115 @@ window.onload = function () {
 		};
 	};
 
+	var messageWindowGroup;
+
+	function onGetKey(keyname) {
+		showMessageWindows("* You got a key *", "Name [" + keyname + "]","","Lets open the locked", "door");
+	}
+
+	/**
+	 * メッセージウィンドウを表示します
+	 * 最大で3行までしか表示できません
+	 * MEMO 可変個引数
+	 */
+	function showMessageWindows() {
+		var messages = [];
+		for(var i = 0; i < arguments.length;i++)
+		{
+			messages.push(arguments[i]);
+		}
+
+		console.log("# message incoming " + messages + "#");
+		if (messageWindowGroup) {
+			game.rootScene.removeChild(messageWindowGroup);
+		}
+		var surface = new Surface(140, 50);
+		var messageWindow = new Sprite(140, 50);
+		messageWindow.image = surface;
+		messageWindow.x = 10;
+		messageWindow.y = 100;
+
+		surface.context.fillStyle = createRgbColor(80, 80, 80);
+		surface.context.beginPath();
+		surface.context.rect(0, 0, 140, 50);
+		surface.context.closePath();
+		surface.context.fill();
+		surface.context.fillStyle = createRgbColor(220, 220, 220);
+		surface.context.beginPath();
+		surface.context.beginPath();
+		surface.context.rect(3, 3, 134, 44);
+		surface.context.closePath();
+		surface.context.fill();
+
+		messageWindow.image = surface;
+		messageWindow.x = 0;
+		messageWindow.y = 0;
+
+		messageWindowGroup = new Group();
+		messageWindowGroup.addChild(messageWindow);
+		messageWindowGroup.x = 10;
+		messageWindowGroup.y = 120;
+
+		var label;
+
+		//最大三行表示
+		var count = 0;
+		while (count < 3 && messages.length > 0) {
+			label = new Label(messages.shift());
+			label.color = "#000";
+			label.font = "12px monospace";
+			label.x = 7;
+			label.y = 7 + (count * 14);
+			messageWindowGroup.addChild(label);
+
+			count++;
+		}
+
+		game.rootScene.addChild(messageWindowGroup);
+
+		if(messages.length === 0)
+		{
+			//これ以上メッセージウィンドウ表示する必要無し
+			interruptAButtonFunction = hideMessageWindow;
+			interruptAButtonArgs = null;
+		}
+		else
+		{
+			interruptAButtonFunction = showMessageWindows;
+			interruptAButtonArgs = messages;
+		}
+	}
+
+	function hideMessageWindow() {
+		if (messageWindowGroup) {
+			game.rootScene.removeChild(messageWindowGroup);
+		}
+	}
+
 	function listenDirectionKey() {
 		game.addEventListener(enchant.Event.UP_BUTTON_DOWN, move);
 		game.addEventListener(Event.DOWN_BUTTON_DOWN, move);
 		game.addEventListener(Event.RIGHT_BUTTON_DOWN, move);
 		game.addEventListener(Event.LEFT_BUTTON_DOWN, move);
-		game.addEventListener(Event.A_BUTTON_DOWN,onAButtonUp);
+		game.addEventListener(Event.A_BUTTON_DOWN, onAButtonUp);
 	}
 
-	function onAButtonUp(e)
-	{
+	var interruptAButtonFunction;
+	var interruptAButtonArgs;
+
+	function onAButtonUp(e) {
 		if (playerImage.tick < 5) {
+			return;
+		}
+
+		if(interruptAButtonFunction != null)
+		{
+			//TODO ひどいので直す
+			var func = interruptAButtonFunction;
+			var args = interruptAButtonArgs;
+			interruptAButtonFunction = null;
+			interruptAButtonArgs = null;
+			func.apply(null, args);
 			return;
 		}
 
@@ -382,28 +472,26 @@ window.onload = function () {
 
 		var moveIdxX = 0;
 		var moveIdxY = 0;
-		switch(dir)
-		{
+		switch (dir) {
 			case DIR_NORTH:
-				moveIdxY --;
+				moveIdxY--;
 				break;
 			case DIR_WEST:
-				moveIdxX --;
+				moveIdxX--;
 				break;
 			case DIR_SOUTH:
-				moveIdxY ++;
+				moveIdxY++;
 				break;
 			case DIR_EAST:
-				moveIdxX ++;
+				moveIdxX++;
 				break;
 		}
 
-		if(map[mapIdxY + moveIdxY][mapIdxX + moveIdxX] == 0)
-		{
+		if (map[mapIdxY + moveIdxY][mapIdxX + moveIdxX] == 0) {
 
 		}
-		else if (map[mapIdxY + moveIdxY][mapIdxX + moveIdxX] == 2)
-		{
+		else if (map[mapIdxY + moveIdxY][mapIdxX + moveIdxX] == 2) {
+			//プレイヤーの正面が扉なので調べる
 			eventmap[mapIdxY + moveIdxY][mapIdxX + moveIdxX].onSearchWall(player);
 			playerImage.redrawEyesight(player.getEyesight());
 			playerImage.x = 20 * player.m_posX + 4;
@@ -412,8 +500,7 @@ window.onload = function () {
 		}
 	}
 
-	function reserveMove(e)
-	{
+	function reserveMove(e) {
 		if (playerImage.tick < 8) {
 			return;
 		}
@@ -424,15 +511,12 @@ window.onload = function () {
 		var needUpdateEyesight = false;
 		var moved = false;
 
-		if(!player.hasReservedMove())
-		{
+		if (!player.hasReservedMove()) {
 			game.removeEventListener(Event.ENTER_FRAME, reserveMove);
 		}
-		else
-		{
+		else {
 			var move = player.dequeueReservedMove();
-			if(move == 0)
-			{
+			if (move == 0) {
 				player.moveForward();
 				moved = true;
 			}
@@ -443,14 +527,11 @@ window.onload = function () {
 			var mapX = player.getPosX() * 2 + 1;
 			var mapY = player.getPosY() * 2 + 1;
 
-			if(moved)
-			{
-				if(eventmap[lastMapY][lastMapX])
-				{
+			if (moved) {
+				if (eventmap[lastMapY][lastMapX]) {
 					eventmap[lastMapY][lastMapX].onLeaveFloor(player);
 				}
-				if(eventmap[mapY][mapX])
-				{
+				if (eventmap[mapY][mapX]) {
 					eventmap[mapY][mapX].onEnterFloor(player);
 				}
 			}
@@ -472,8 +553,7 @@ window.onload = function () {
 
 		var needUpdateEyesight = false;
 		var moved = false;
-		if(!player.hasReservedMove())
-		{
+		if (!player.hasReservedMove()) {
 			switch (e.type) {
 				case Event.UP_BUTTON_DOWN:
 					//向いている方向に移動する
@@ -500,49 +580,32 @@ window.onload = function () {
 					break;
 			}
 		}
-		else
-		{
+		else {
 			/*
-			var move = player.dequeueReservedMove();
-			if(move == 0)
-			{
-				player.moveForward();
-			}
-			needUpdateEyesight = true;
-			*/
+			 var move = player.dequeueReservedMove();
+			 if(move == 0)
+			 {
+			 player.moveForward();
+			 }
+			 needUpdateEyesight = true;
+			 */
 		}
 
 		if (needUpdateEyesight) {
-			/*
-			var eyesight = player.getEyesight();
-			var str = "";
-			for(var i = 0;i<eyesight.length;i++)
-			{
-				str = "";
-				for(var j =0;j<eyesight[i].length;j++)
-				{
-					str += "["+eyesight[i][j]+"]";
-				}
-				console.log(str);
-			}
-			*/
+			//視界の更新が必要な場合
 			var mapX = player.getPosX() * 2 + 1;
 			var mapY = player.getPosY() * 2 + 1;
 
-			if(moved)
-			{
-				if(eventmap[lastMapY][lastMapX])
-				{
+			if (moved) {
+				if (eventmap[lastMapY][lastMapX]) {
 					eventmap[lastMapY][lastMapX].onLeaveFloor(player);
 				}
-				if(eventmap[mapY][mapX])
-				{
+				if (eventmap[mapY][mapX]) {
 					eventmap[mapY][mapX].onEnterFloor(player);
 				}
 			}
 
-			if(player.hasReservedMove())
-			{
+			if (player.hasReservedMove()) {
 				//この時点でプレイヤーの動きに予約が入っていた場合
 				game.addEventListener(Event.ENTER_FRAME, reserveMove);
 			}
@@ -552,21 +615,6 @@ window.onload = function () {
 			playerImage.y = 20 * player.m_posY + 4;
 			playerImage.tick = 0;
 		}
-
-		/*
-		var i, j,str;
-		console.log("==========================");
-		console.log("> player eyesight");
-		for(i = 0;i<player.m_eyesight.length;i++)
-		{
-			str = "";
-			for(j=0;j<player.m_eyesight[i].length;j++)
-			{
-				str += "["+player.m_eyesight[i][j]+"]";
-			}
-			console.log(str);
-		}
-		*/
 	}
 
 	function createRgbColor(r, g, b) {
@@ -603,8 +651,6 @@ window.onload = function () {
 		}
 		return a;
 	}
-
-
 
 
 	//邪魔だったのでまとめた
@@ -671,8 +717,7 @@ window.onload = function () {
 			}
 		}
 		if (eyesight[idxX + 1][4] != 0) {
-			switch (eyesight[idxX + 1][4])
-			{
+			switch (eyesight[idxX + 1][4]) {
 				case 1:
 					//壁
 					surface.drawRightTrapezoidWall(color3, tX + longLen, tY, longLen, legLen, shortLen);

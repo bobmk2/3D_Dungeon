@@ -31,11 +31,22 @@ class LockedDoor extends Door
 	{
 		if(this._isLocked)
 		{
-			console.log("* this door is locked *");
 			if(player.hasItem(this._openKey))
 			{
-				console.log("* You could open the door *");
+				//開けられた
+				if(this._searchCallback != null)
+				{
+					this._searchCallback.apply(null, ["You opened the door"]);
+				}
 				this._isLocked = false;
+			}
+			else
+			{
+				//開けられなかった
+				if(this._searchCallback != null)
+				{
+					this._searchCallback.apply(null, ["The door is locked"]);
+				}
 			}
 		}
 		else

@@ -1,5 +1,6 @@
 var Door = (function () {
     function Door() {
+        this._searchCallback = null;
     }
     Door.prototype._passThrough = function (player) {
         var posX = player.getPosX();
@@ -23,6 +24,9 @@ var Door = (function () {
     Door.prototype.onSearchWall = function (player) {
         console.log("* this door is opened *");
         this._passThrough(player);
+    };
+    Door.prototype.setSearchCallback = function (func) {
+        this._searchCallback = func;
     };
     Door.prototype.onEnterFloor = function (player) {
     };

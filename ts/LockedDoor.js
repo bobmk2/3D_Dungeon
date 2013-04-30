@@ -15,10 +15,19 @@ var LockedDoor = (function (_super) {
     };
     LockedDoor.prototype.onSearchWall = function (player) {
         if(this._isLocked) {
-            console.log("* this door is locked *");
             if(player.hasItem(this._openKey)) {
-                console.log("* You could open the door *");
+                if(this._searchCallback != null) {
+                    this._searchCallback.apply(null, [
+                        "You opened the door"
+                    ]);
+                }
                 this._isLocked = false;
+            } else {
+                if(this._searchCallback != null) {
+                    this._searchCallback.apply(null, [
+                        "The door is locked"
+                    ]);
+                }
             }
         } else {
             _super.prototype._passThrough.call(this, player);
