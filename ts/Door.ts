@@ -9,8 +9,10 @@
 /// <reference path="Player.ts" />
 class Door implements IMapEvent {
 
-	constructor() {
+	public _searchCallback:Function;
 
+	constructor() {
+		this._searchCallback = null;
 	}
 
 	/**
@@ -47,6 +49,11 @@ class Door implements IMapEvent {
 	public onSearchWall (player:Player):void {
 		console.log("* this door is opened *");
 		this._passThrough(player);
+	}
+
+	public setSearchCallback(func:Function):void
+	{
+		this._searchCallback = func;
 	}
 
 	//床系のイベント

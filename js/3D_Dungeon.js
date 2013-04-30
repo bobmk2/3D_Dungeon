@@ -141,6 +141,7 @@ window.onload = function () {
 
 		eventmap[2][3] = new Door();
 		var lockedDoor = new LockedDoor();
+		lockedDoor.setSearchCallback(showMessageWindows);
 		lockedDoor.setOpenKey("AutumnLeaves");
 
 		var itemFloor = new ItemFloor();
@@ -351,17 +352,23 @@ window.onload = function () {
 	var messageWindowGroup;
 
 	function onGetKey(keyname) {
-		showMessageWindows(["* You got a key *", "Name [" + keyname + "]"]);
+		showMessageWindows("* You got a key *", "Name [" + keyname + "]","","Lets open the locked", "door");
 	}
 
 	/**
 	 * メッセージウィンドウを表示します
 	 * 最大で3行までしか表示できません
-	 * @param messages
+	 * MEMO 可変個引数
 	 */
-	function showMessageWindows(messages) {
+	function showMessageWindows() {
+		var messages = [];
+		for(var i = 0; i < arguments.length;i++)
+		{
+			messages.push(arguments[i]);
+		}
+
 		console.log("# message incoming " + messages + "#");
-		if (messageWindowGroup && game.rootScene.contains(messageWindowGroup)) {
+		if (messageWindowGroup) {
 			game.rootScene.removeChild(messageWindowGroup);
 		}
 		var surface = new Surface(140, 50);
@@ -408,10 +415,17 @@ window.onload = function () {
 
 		game.rootScene.addChild(messageWindowGroup);
 
-		//これ以上メッセージウィンドウ表示する必要無し
-		interruptAButtonFunction = hideMessageWindow;
-		interruptAButtonArgs = null;
-
+		if(messages.length === 0)
+		{
+			//これ以上メッセージウィンドウ表示する必要無し
+			interruptAButtonFunction = hideMessageWindow;
+			interruptAButtonArgs = null;
+		}
+		else
+		{
+			interruptAButtonFunction = showMessageWindows;
+			interruptAButtonArgs = messages;
+		}
 	}
 
 	function hideMessageWindow() {
@@ -430,17 +444,6 @@ window.onload = function () {
 
 	var interruptAButtonFunction;
 	var interruptAButtonArgs;
-	/*
-	function changeAButtonAction()
-	{
-		game.removeEventListener(Event.A_BUTTON_DOWN, lastAButtonAction);
-	}
-	*/
-
-	function closeWindow()
-	{
-
-	}
 
 	function onAButtonUp(e) {
 		if (playerImage.tick < 5) {
@@ -449,9 +452,12 @@ window.onload = function () {
 
 		if(interruptAButtonFunction != null)
 		{
-			interruptAButtonFunction.apply(null, interruptAButtonArgs);
+			//TODO ひどいので直す
+			var func = interruptAButtonFunction;
+			var args = interruptAButtonArgs;
 			interruptAButtonFunction = null;
 			interruptAButtonArgs = null;
+			func.apply(null, args);
 			return;
 		}
 

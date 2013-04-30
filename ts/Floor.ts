@@ -20,16 +20,17 @@ class Floor implements IMapEvent
 	}
 
 	//壁系のイベント
-	public onSearchWall (player:Player):void {
+	public onSearchWall (player:Player):void
+	{
 	}
 
 	//床系のイベント
-	public onEnterFloor(player:Player):void {
-
+	public onEnterFloor(player:Player):void
+	{
 	}
 
-	public onLeaveFloor(player:Player):void {
-
+	public onLeaveFloor(player:Player):void
+	{
 	}
 
 	public onSearchFloor(player:Player):void
