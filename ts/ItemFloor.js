@@ -20,7 +20,7 @@ var ItemFloor = (function (_super) {
             player.addItem(this._item);
             this._isPickedUpItem = true;
             if(this._func) {
-                this._func.apply(null, new Array(this._item));
+                this._func.apply(null, new Array(this._item.toString()));
             }
         }
     };
